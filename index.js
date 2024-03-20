@@ -14,7 +14,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://balaifinder-backend-deploy.onrender.com",
+    origin: "http://localhost:5173",
   })
 );
 app.use(cookieParser());
