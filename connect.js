@@ -1,5 +1,3 @@
-// OLD CODE FOR LOCALHOST
-
 import mysql from "mysql";
 import * as dotenv from 'dotenv';
 
