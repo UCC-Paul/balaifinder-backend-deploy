@@ -15,7 +15,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "render-clean": "rm -rf node_modules package-lock.json && npx rimraf .next"
+    
   },
   "keywords": [],
   "author": "",
