@@ -12,11 +12,21 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json());
-app.use(
-  cors({
-    origin: "https://balaifinder-frontend-deploy.vercel.app/",
-  })
-);
+
+//NEW CORS
+app.use(cors());
+
+
+
+//OLD CORS FOR LOCALHOSTING
+
+//app.use(
+  //cors({
+    //origin: "http://localhost:5173",
+  //})
+//);
+
+
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
