@@ -14,11 +14,12 @@ app.use((req, res, next) => {
 
 app.use(cors({
   origin: "https://balaifinder-backend-deploy.onrender.com",
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
 
 //NEW CORS
-app.use(cors());
+//app.use(cors());
 
 
 //app.get('/cors', (req, res) => {
