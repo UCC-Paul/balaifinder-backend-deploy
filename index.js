@@ -5,6 +5,7 @@ import userRoutes from "./routes/users.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { db } from "./connect.js";
+import preferencesRoute from "./routes/preferencesRoute.js";
 
 //middleware
 app.use((req, res, next) => {
@@ -36,7 +37,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-
+app.use("/api/preferences", preferencesRoute);
 
 // -- Main SQL ALGORITHM -- 
 app.get("/api/get", (req, res) => {
