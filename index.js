@@ -80,7 +80,7 @@ app.get("/api/get/properties", (req, res) => {
   });
 });
 
-// -- GET PREFERRECES--
+// -- GET PREFERRECES LOCATION--
 app.get("/api/get/option/location", (req, res) => {
   const sqlGetoptionLocation = "SELECT DISTINCT location FROM propertiestable";
   db.query(sqlGetoptionLocation, (err, result) => {
@@ -93,7 +93,7 @@ app.get("/api/get/option/location", (req, res) => {
   });
 });
 
-// -- GET PREFERRECES --
+// -- GET PREFERRECES TYPE --
 app.get("/api/get/option/type", (req, res) => {
   const sqlGetoptionType = "SELECT DISTINCT type FROM propertiestable";
   db.query(sqlGetoptionType, (err, result) => {
@@ -106,10 +106,62 @@ app.get("/api/get/option/type", (req, res) => {
   });
 });
 
-// -- GET PREFERRECES --
+// -- GET PREFERRECES PRICE --
 app.get("/api/get/option/price", (req, res) => {
   const sqlGetoptionPrice = "SELECT DISTINCT price FROM propertiestable";
   db.query(sqlGetoptionPrice, (err, result) => {
+    if (err) {
+      console.log("error", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    console.log("result", result);
+    res.send(result);
+  });
+});
+
+// -- GET PREFERRECES NEAR MALL --
+app.get("/api/get/option/price", (req, res) => {
+  const sqlGetoptionPrice = "SELECT DISTINCT price FROM propertiestable";
+  db.query(sqlGetoptionPrice, (err, result) => {
+    if (err) {
+      console.log("error", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    console.log("result", result);
+    res.send(result);
+  });
+});
+
+// -- GET PREFERRECES NEAR CHURCH --
+app.get("/api/get/option/nearmall", (req, res) => {
+  const sqlGetoptionNearMall = "SELECT DISTINCT isnearmall FROM propertiestable";
+  db.query(sqlGetoptionNearMall, (err, result) => {
+    if (err) {
+      console.log("error", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    console.log("result", result);
+    res.send(result);
+  });
+});
+
+// -- GET PREFERRECES NEAR SCHOOL --
+app.get("/api/get/option/nearschool", (req, res) => {
+  const sqlGetoptionNearSchool = "SELECT DISTINCT isnearschool FROM propertiestable";
+  db.query(sqlGetoptionNearSchool, (err, result) => {
+    if (err) {
+      console.log("error", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    console.log("result", result);
+    res.send(result);
+  });
+});
+
+// -- GET PREFERRECES NEAR CHURCH --
+app.get("/api/get/option/nearchurch", (req, res) => {
+  const sqlGetoptionNearChurch = "SELECT DISTINCT isnearchurch FROM propertiestable";
+  db.query(sqlGetoptionNearChurch, (err, result) => {
     if (err) {
       console.log("error", err);
       return res.status(500).json({ error: "Internal server error" });
