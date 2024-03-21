@@ -120,6 +120,46 @@ app.get("/api/get/option/price", (req, res) => {
   });
 });
 
+// -- SET USERS PREFERENCES --
+app.post("api/post/submitpreferences", (req, res) => {
+  const { location, house_type, price, near_school, near_church, near_mall } = req.body;
+
+  // Check if any of the submitted values are the default placeholder values
+  if (
+      location === "Select Preferred Location" ||
+      house_type === "Select Preferred House Type" ||
+      price === "Select Price" ||
+      near_school === "Yes or No" ||
+      near_church === "Yes or No" ||
+      near_mall === "Yes or No"
+  ) {
+      res.status(400).send("Please select valid preferences");
+      return;
+  }
+
+  const updatepref = `
+    UPDATE userpreferencestable
+    SET type = ?, location = ?, price = ?, isnearschool = ?, isnearchurch = ?, isnearmall = ?
+    WHERE id = 1`; // Assuming user_id is 1
+
+  db.query(updatepref, [house_type, location, price, near_school, near_church, near_mall], (err, result) => {
+      if (err) {
+          console.error("Error updating preference:", err);
+          res.status(500).send("Error updating preference");
+          return;
+      }
+      if (result.affectedRows === 0) {
+          // If no rows were affected, it means there was no existing preference for the user
+          res.status(404).send("No preference found for the user");
+          return;
+      }
+      console.log('Your preferences are all set check if you got a match');
+      // Sending success response
+      res.send('Your preferences are all set check if you got a match');
+  });
+});
+
+
 app.listen(8800, () => {
   console.log("API working");
 });
