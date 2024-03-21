@@ -14,9 +14,16 @@ app.use((req, res, next) => {
 
 app.use(cors({
   origin: "https://balaifinder-backend-deploy.onrender.com",
-  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "https://balaifinder-backend-deploy.onrender.com");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 //NEW CORS
 //app.use(cors());
@@ -38,6 +45,7 @@ app.use(cors({
 
 
 app.use(cookieParser());
+app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
