@@ -7,11 +7,6 @@ import cors from "cors";
 import { db } from "./connect.js";
 
 //middleware
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Credentials", true);
-  next();
-});
-
 app.use(cors({
   origin: "https://balaifinder-backend-deploy.onrender.com",
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
