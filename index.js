@@ -1,26 +1,28 @@
 import express from "express";
-const app = express();
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { db } from "./connect.js";
 
-//middleware
+const app = express();
+
+/// Middleware
 app.use(cors({
+  origin: "https://balaifinder-backend-deploy.onrender.com",
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
-
 app.use(cookieParser());
 app.use(express.json());
 
+// Additional CORS headers
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://balaifinder-backend-deploy.onrender.com");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
 });
+
 
 //NEW CORS
 //app.use(cors());
@@ -216,6 +218,9 @@ app.post("/api/post/submitpreferences", (req, res) => {
   });
 });
 
+app.options("/api/auth/login", (req, res) => {
+  res.sendStatus(200);
+});
 
 app.listen(8800, () => {
   console.log("API working");
