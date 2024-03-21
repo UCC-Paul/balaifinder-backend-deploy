@@ -5,7 +5,6 @@ import userRoutes from "./routes/users.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { db } from "./connect.js";
-import preferencesRoute from "./routes/preferencesRoute.js";
 
 //middleware
 app.use((req, res, next) => {
