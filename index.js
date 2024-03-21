@@ -14,8 +14,13 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 //NEW CORS
-app.use(cors());
+//app.use(cors());
 
+
+app.get('/cors', (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.send({ "msg": "This has CORS enabled 🎈" })
+  })
 
 
 //OLD CORS FOR LOCALHOSTING
