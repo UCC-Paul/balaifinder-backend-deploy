@@ -36,7 +36,6 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/preferences", preferencesRoute);
 
 // -- Main SQL ALGORITHM -- 
 app.get("/api/get", (req, res) => {
