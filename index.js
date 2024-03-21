@@ -120,7 +120,7 @@ app.get("/api/get/option/price", (req, res) => {
 });
 
 // -- SET USERS PREFERENCES --
-app.post("api/post/submitpreferences", (req, res) => {
+app.post("/api/post/submitpreferences", (req, res) => {
   const { location, house_type, price, near_school, near_church, near_mall } = req.body;
 
   // Check if any of the submitted values are the default placeholder values
