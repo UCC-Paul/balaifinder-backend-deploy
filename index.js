@@ -8,9 +8,11 @@ import { db } from "./connect.js";
 
 //middleware
 app.use(cors({
-  origin: "https://balaifinder-backend-deploy.onrender.com",
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
+
+app.use(cookieParser());
+app.use(express.json());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "https://balaifinder-backend-deploy.onrender.com");
@@ -37,10 +39,6 @@ app.use((req, res, next) => {
     //origin: "http://localhost:5173",
   //})
 //);
-
-
-app.use(cookieParser());
-app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
