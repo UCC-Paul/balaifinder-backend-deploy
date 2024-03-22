@@ -48,32 +48,35 @@ app.use("/api/users", userRoutes);
 // -- Main SQL ALGORITHM -- 
 app.get("/api/get", (req, res) => {
   const sqlGet = `
-  SELECT *,
-         (CASE
-             WHEN u.type = m.type THEN 2
-             WHEN u.location = m.location THEN 3
-             WHEN u.price <= m.price * 1.1 AND u.price >= m.price * 0.9 THEN 2
-             WHEN TRIM(UPPER(u.isnearschool)) = TRIM(UPPER(m.isnearschool)) THEN 0.1
-             WHEN TRIM(UPPER(u.isnearchurch)) = TRIM(UPPER(m.isnearchurch)) THEN 0.1
-             WHEN TRIM(UPPER(u.isnearmall)) = TRIM(UPPER(m.isnearmall)) THEN 0.1
-             ELSE 0
-         END) AS score
-  FROM userpreferencestable u
-  LEFT JOIN propertiestable m ON u.type = m.type AND u.location = m.location
-  HAVING score > 0
-  ORDER BY score DESC;
-`;
+    SELECT *,
+      (
+        CASE
+          WHEN u.type = m.type THEN 0.35 * 100
+          WHEN u.location = m.location THEN 0.3 * 100
+          WHEN u.price <= m.price * 1.1 AND u.price >= m.price * 0.9 THEN 0.25 * 100
+          WHEN TRIM(UPPER(u.isnearschool)) = TRIM(UPPER(m.isnearschool)) THEN (0.025 + (0.15 / 3)) * 100 -- 15% divided equally among the three factors
+          WHEN TRIM(UPPER(u.isnearchurch)) = TRIM(UPPER(m.isnearchurch)) THEN (0.025 + (0.15 / 3)) * 100
+          WHEN TRIM(UPPER(u.isnearmall)) = TRIM(UPPER(m.isnearmall)) THEN (0.025 + (0.15 / 3)) * 100
+          ELSE (0.015 + (0.15 / 3)) * 100 -- Scatter the remaining 15% for other factors
+        END
+      ) AS score_percentage
+    FROM userpreferencestable u
+    LEFT JOIN propertiestable m ON u.type = m.type AND u.location = m.location
+    HAVING score_percentage > 0
+    ORDER BY score_percentage DESC;
+  `;
   
-    db.query(sqlGet, (error, results) => {
-      if (error) {
-        // handle error
-        console.error("Error executing query:", error);
-        return res.status(500).json({ message: "Internal server error." });
-      }
-  
-      res.send(results);
-    });
+  db.query(sqlGet, (error, results) => {
+    if (error) {
+      console.error("Error executing query:", error);
+      return res.status(500).json({ message: "Internal server error." });
+    }
+
+    res.send(results);
+  });
 });
+
+
 
 // -- GET ALL PROPERTIES FOR PROPERTY PAGE--
 app.get("/api/get/properties", (req, res) => {
