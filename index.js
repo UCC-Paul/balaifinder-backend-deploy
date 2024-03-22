@@ -216,7 +216,7 @@ app.post("/api/post/submitpreferences", (req, res) => {
       //console.log('Your preferences are all set check if you got a match');
       // Sending success response
       //res.send('Your preferences are all set check if you got a match');
-      res.redirect('/MatchUp')
+      
   });
 });
 
