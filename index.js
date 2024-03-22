@@ -9,7 +9,7 @@ const app = express();
 
 /// Middleware
 app.use(cors({
-  origin: "https://balaifinder-frontend-deploy.vercel.app//",
+  origin: "https://production-swart.vercel.app/",
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
 app.use(cookieParser());
