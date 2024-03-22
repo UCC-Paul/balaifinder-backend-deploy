@@ -48,22 +48,69 @@ app.use("/api/users", userRoutes);
 // -- Main SQL ALGORITHM -- 
 app.get("/api/get", (req, res) => {
   const sqlGet = `
-    SELECT *,
-      (
-        CASE
-          WHEN u.type = m.type THEN 0.35 * 100
-          WHEN u.location = m.location THEN 0.3 * 100
-          WHEN u.price <= m.price * 1.1 AND u.price >= m.price * 0.9 THEN 0.25 * 100
-          WHEN TRIM(UPPER(u.isnearschool)) = TRIM(UPPER(m.isnearschool)) THEN (0.025 + (0.15 / 3)) * 100 -- 15% divided equally among the three factors
-          WHEN TRIM(UPPER(u.isnearchurch)) = TRIM(UPPER(m.isnearchurch)) THEN (0.025 + (0.15 / 3)) * 100
-          WHEN TRIM(UPPER(u.isnearmall)) = TRIM(UPPER(m.isnearmall)) THEN (0.025 + (0.15 / 3)) * 100
-          ELSE (0.015 + (0.15 / 3)) * 100 -- Scatter the remaining 15% for other factors
-        END
-      ) AS score_percentage
+  WITH cte_match_counts AS (
+    SELECT
+      u.id AS user_id,
+      m.id AS prop_id,
+      
+      CASE 
+        WHEN u.type = m.type THEN 1
+        ELSE 0
+      END AS type_match,
+      
+      CASE 
+        WHEN u.location = m.location THEN 1
+        ELSE 0
+      END AS loc_match,
+      
+      CASE 
+        WHEN u.price <= m.price * 1.1 AND u.price >= m.price * 0.9 THEN 1
+        ELSE 0
+      END AS price_range_match,
+      
+      CASE 
+        WHEN TRIM(UPPER(u.isnearschool)) = TRIM(UPPER(m.isnearschool)) THEN 1
+        ELSE 0
+      END AS isnearschool_match,
+      
+      CASE 
+        WHEN TRIM(UPPER(u.isnearchurch)) = TRIM(UPPER(m.isnearchurch)) THEN 1
+        ELSE 0
+      END AS isnearchurch_match,
+      
+      CASE 
+        WHEN TRIM(UPPER(u.isnearmall)) = TRIM(UPPER(m.isnearmall)) THEN 1
+        ELSE 0
+      END AS isnearmall_match
     FROM userpreferencestable u
     LEFT JOIN propertiestable m ON u.type = m.type AND u.location = m.location
-    HAVING score_percentage > 0
-    ORDER BY score_percentage DESC;
+  ),
+  cte_individual_scores AS (
+    SELECT
+      user_id,
+      prop_id,
+      type_match * 0.35 AS type_score,
+      loc_match * 0.3 AS loc_score,
+      price_range_match * 0.25 AS price_score,
+      isnearschool_match * (0.025 + (0.15 / 3)) AS isnearschool_score,
+      isnearchurch_match * (0.025 + (0.15 / 3)) AS isnearchurch_score,
+      isnearmall_match * (0.025 + (0.15 / 3)) AS isnearmall_score
+    FROM cte_match_counts
+  ),
+  cte_total_scores AS (
+    SELECT
+      user_id,
+      prop_id,
+      type_score + loc_score + price_score + isnearschool_score + isnearchurch_score + isnearmall_score AS total_score
+    FROM cte_individual_scores
+  )
+  SELECT t.*
+  FROM cte_total_scores t
+  JOIN (
+    SELECT MAX(total_score) AS max_score
+    FROM cte_total_scores
+  ) tm ON t.total_score = tm.max_score
+  ORDER BY t.total_score DESC;
   `;
   
   db.query(sqlGet, (error, results) => {
