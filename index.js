@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { db } from "./connect.js";
 
+
 const app = express();
 
 /// Middleware
@@ -212,9 +213,10 @@ app.post("/api/post/submitpreferences", (req, res) => {
           res.status(404).send("No preference found for the user");
           return;
       }
-      console.log('Your preferences are all set check if you got a match');
+      //console.log('Your preferences are all set check if you got a match');
       // Sending success response
-      res.send('Your preferences are all set check if you got a match');
+      //res.send('Your preferences are all set check if you got a match');
+      res.redirect('/MatchUp')
   });
 });
 
