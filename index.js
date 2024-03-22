@@ -5,12 +5,11 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { db } from "./connect.js";
 
-
 const app = express();
 
 /// Middleware
 app.use(cors({
-  origin: "https://production-swart.vercel.app/",
+  origin: "https://balaifinder-frontend-deploy.vercel.app//",
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
 app.use(cookieParser());
