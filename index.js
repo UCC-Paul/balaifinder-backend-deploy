@@ -50,45 +50,45 @@ app.get("/api/get", (req, res) => {
   const sqlGet = `
   WITH cte_match_counts AS (
     SELECT
-      u.id AS user_id,
-      m.id AS prop_id,
+      p.id AS prop_id,
+      pr.id AS pref_id,
       
       CASE 
-        WHEN u.type = m.type THEN 1
+        WHEN p.type = pr.housetype THEN 1
         ELSE 0
       END AS type_match,
       
       CASE 
-        WHEN u.location = m.location THEN 1
+        WHEN p.location = pr.location THEN 1
         ELSE 0
       END AS loc_match,
       
       CASE 
-        WHEN u.price <= m.price * 1.1 AND u.price >= m.price * 0.9 THEN 1
+        WHEN p.price BETWEEN pr.price * 0.9 AND pr.price * 1.1 THEN 1
         ELSE 0
       END AS price_range_match,
       
       CASE 
-        WHEN TRIM(UPPER(u.isnearschool)) = TRIM(UPPER(m.isnearschool)) THEN 1
+        WHEN TRIM(UPPER(p.isnearschool)) = TRIM(UPPER(pr.location)) THEN 1
         ELSE 0
       END AS isnearschool_match,
       
       CASE 
-        WHEN TRIM(UPPER(u.isnearchurch)) = TRIM(UPPER(m.isnearchurch)) THEN 1
+        WHEN TRIM(UPPER(p.isnearchurch)) = TRIM(UPPER(pr.location)) THEN 1
         ELSE 0
       END AS isnearchurch_match,
       
       CASE 
-        WHEN TRIM(UPPER(u.isnearmall)) = TRIM(UPPER(m.isnearmall)) THEN 1
+        WHEN TRIM(UPPER(p.isnearmall)) = TRIM(UPPER(pr.location)) THEN 1
         ELSE 0
       END AS isnearmall_match
-    FROM userpreferencestable u
-    LEFT JOIN propertiestable m ON u.type = m.type AND u.location = m.location
+    FROM propertiestable p
+    LEFT JOIN preferencestable pr ON p.location = pr.location
   ),
   cte_individual_scores AS (
     SELECT
-      user_id,
       prop_id,
+      pref_id,
       type_match * 0.35 AS type_score,
       loc_match * 0.3 AS loc_score,
       price_range_match * 0.25 AS price_score,
@@ -99,10 +99,10 @@ app.get("/api/get", (req, res) => {
   ),
   cte_total_scores AS (
     SELECT
-      user_id,
       prop_id,
-      type_score + loc_score + price_score + isnearschool_score + isnearchurch_score + isnearmall_score AS total_score
+      SUM(type_score + loc_score + price_score + isnearschool_score + isnearchurch_score + isnearmall_score) AS total_score
     FROM cte_individual_scores
+    GROUP BY prop_id
   )
   SELECT t.*
   FROM cte_total_scores t
