@@ -45,7 +45,8 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
-// -- Main SQL ALGORITHM -- 
+// -- OLD Main SQL ALGORITHM -- 
+/*
 app.get("/api/get", (req, res) => {
   const sqlGet = `
   SELECT *,
@@ -73,7 +74,70 @@ app.get("/api/get", (req, res) => {
     res.send(results);
   });
 });
+*/
 
+// -- NEW Main SQL ALGORITHM --
+app.get("/api/get", (req, res) => {
+  const sqlGet = `
+  SELECT *,
+       ((CASE 
+            WHEN u.type = m.type THEN 0.20 -- 20% weight for matching types
+          END) +
+        (CASE 
+            WHEN u.location = m.location THEN 0.30 -- 30% weight for matching locations
+          END) +
+          (CASE 
+            WHEN u.price BETWEEN m.price * 0.9 AND m.price * 1.1 THEN 
+              (1 - ABS(1 - u.price / m.price)) * 0.20 -- 20% weight for matching prices within a 10% range, adjust score based on percentage deviation
+          ELSE 0 -- no score for mismatched prices
+          END) +
+        (CASE 
+            WHEN TRIM(UPPER(u.isnearschool)) = TRIM(UPPER(m.isnearschool)) THEN 0.0429 -- 4.29% weight for matching school proximity
+            WHEN TRIM(UPPER(u.isnearschool)) IS NOT NULL AND TRIM(UPPER(m.isnearschool)) IS NOT NULL THEN -0.0086 -- 0.86% penalty for mismatching school proximity when both values are non-null
+            ELSE 0
+          END) +
+        (CASE 
+            WHEN TRIM(UPPER(u.isnearchurch)) = TRIM(UPPER(m.isnearchurch)) THEN 0.0429 -- 4.29% weight for matching church proximity
+            WHEN TRIM(UPPER(u.isnearchurch)) IS NOT NULL AND TRIM(UPPER(m.isnearchurch)) IS NOT NULL THEN -0.0086 -- 0.86% penalty for mismatching church proximity when both values are non-null
+            ELSE 0
+          END) +
+        (CASE 
+            WHEN TRIM(UPPER(u.isnearmall)) = TRIM(UPPER(m.isnearmall)) THEN 0.0429 -- 4.29% weight for matching mall proximity
+            WHEN TRIM(UPPER(u.isnearmall)) IS NOT NULL AND TRIM(UPPER(m.isnearmall)) IS NOT NULL THEN -0.0086 -- 0.86% penalty for mismatching mall proximity when both values are non-null
+            ELSE 0
+          END) +
+        (CASE 
+            WHEN u.numberofbedroom = m.numberofbedroom THEN 0.0429 -- 4.29% weight for matching number of bedrooms
+            ELSE 0
+          END) +
+        (CASE 
+            WHEN u.numberofbathroom = m.numberofbathroom THEN 0.0429 -- 4.29% weight for matching number of bathrooms
+            ELSE 0
+          END) +
+        (CASE 
+            WHEN u.typeoflot = m.typeoflot THEN 0.0429 -- 4.29% weight for matching type of lot
+            ELSE 0
+          END) +
+        (CASE 
+            WHEN u.familysize = m.familysize THEN 0.0429 -- 4.29% weight for matching family size
+            ELSE 0
+          END)) AS score
+  FROM userpreferencestable u
+  LEFT JOIN propertiestable m ON u.type = m.type AND u.location = m.location
+  HAVING score > 0
+  ORDER BY score DESC;
+  `;
+
+    db.query(sqlGet, (error, results) => {
+      if (error) {
+        // handle error
+        console.error("Error executing query:", error);
+        return res.status(500).json({ message: "Internal server error." });
+      }
+  
+      res.send(results);
+    });
+});
 
 
 // -- GET ALL PROPERTIES FOR PROPERTY PAGE--
@@ -119,58 +183,6 @@ app.get("/api/get/option/type", (req, res) => {
 app.get("/api/get/option/price", (req, res) => {
   const sqlGetoptionPrice = "SELECT DISTINCT price FROM propertiestable";
   db.query(sqlGetoptionPrice, (err, result) => {
-    if (err) {
-      console.log("error", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    console.log("result", result);
-    res.send(result);
-  });
-});
-
-// -- GET PREFERRECES NEAR MALL --
-app.get("/api/get/option/price", (req, res) => {
-  const sqlGetoptionPrice = "SELECT DISTINCT price FROM propertiestable";
-  db.query(sqlGetoptionPrice, (err, result) => {
-    if (err) {
-      console.log("error", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    console.log("result", result);
-    res.send(result);
-  });
-});
-
-// -- GET PREFERRECES NEAR CHURCH --
-app.get("/api/get/option/nearmall", (req, res) => {
-  const sqlGetoptionNearMall = "SELECT DISTINCT isnearmall FROM propertiestable";
-  db.query(sqlGetoptionNearMall, (err, result) => {
-    if (err) {
-      console.log("error", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    console.log("result", result);
-    res.send(result);
-  });
-});
-
-// -- GET PREFERRECES NEAR SCHOOL --
-app.get("/api/get/option/nearschool", (req, res) => {
-  const sqlGetoptionNearSchool = "SELECT DISTINCT isnearschool FROM propertiestable";
-  db.query(sqlGetoptionNearSchool, (err, result) => {
-    if (err) {
-      console.log("error", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    console.log("result", result);
-    res.send(result);
-  });
-});
-
-// -- GET PREFERRECES NEAR CHURCH --
-app.get("/api/get/option/nearchurch", (req, res) => {
-  const sqlGetoptionNearChurch = "SELECT DISTINCT isnearchurch FROM propertiestable";
-  db.query(sqlGetoptionNearChurch, (err, result) => {
     if (err) {
       console.log("error", err);
       return res.status(500).json({ error: "Internal server error" });
