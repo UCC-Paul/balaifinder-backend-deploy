@@ -182,16 +182,18 @@ app.get("/api/get/option/nearchurch", (req, res) => {
 
 // -- SET USERS PREFERENCES --
 app.post("/api/post/submitpreferences", (req, res) => {
-  const { location, house_type, price, near_school, near_church, near_mall } = req.body;
+  const { location, house_type, price, near_school, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
 
   // Check if any of the submitted values are the default placeholder values
   if (
-      location === "Select Preferred Location" ||
-      house_type === "Select Preferred House Type" ||
-      price === "Select Price" ||
-      near_school === "Yes or No" ||
-      near_church === "Yes or No" ||
-      near_mall === "Yes or No"
+    location === "Please Select" ||
+    house_type === "Please Select" ||
+    price === "Please Select" ||
+    near_school === "Please Select" ||
+    near_church === "Please Select" ||
+    near_mall === "Please Select" ||
+    bedroom === "Please Select" ||
+    bathroom === "Please Select" 
   ) {
       res.status(400).send("Please select valid preferences");
       return;
@@ -199,10 +201,10 @@ app.post("/api/post/submitpreferences", (req, res) => {
 
   const updatepref = `
     UPDATE userpreferencestable
-    SET type = ?, location = ?, price = ?, isnearschool = ?, isnearchurch = ?, isnearmall = ?
+    SET type = ?, location = ?, price = ?, isnearschool = ?, isnearchurch = ?, isnearmall = ?, numberofbedroom = ?, numberofbathroom = ?, familysize = ?, typeoflot = ?
     WHERE id = 1`; // Assuming user_id is 1
 
-  db.query(updatepref, [house_type, location, price, near_school, near_church, near_mall], (err, result) => {
+  db.query(updatepref, [house_type, location, price, near_school, near_church, near_mall, bedroom, bathroom, familysize, typeoflot], (err, result) => {
       if (err) {
           console.error("Error updating preference:", err);
           res.status(500).send("Error updating preference");
