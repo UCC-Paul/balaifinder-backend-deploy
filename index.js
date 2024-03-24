@@ -139,6 +139,21 @@ app.get("/api/get", (req, res) => {
     });
 });
 
+// -- GET PRODUCT DETAILS BY ID --
+app.get("/api/get/properties/:id", (req, res) => {
+  const productId = req.params.id;
+  const sqlGetProductById = "SELECT * FROM propertiestable WHERE id = ?";
+  db.query(sqlGetProductById, [productId], (err, result) => {
+    if (err) {
+      console.error("Error fetching product details:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    if (result.length === 0) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    res.json(result[0]); // Assuming there's only one product with the given ID
+  });
+});
 
 // -- GET ALL PROPERTIES FOR PROPERTY PAGE--
 app.get("/api/get/properties", (req, res) => {
