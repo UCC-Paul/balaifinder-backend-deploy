@@ -153,7 +153,7 @@ app.post("/api/post/submitpreferences", (req, res) => {
 
 app.get('/api/get/likes', (req, res) => {
   // Query to fetch property IDs that the user likes
-  const userId = req.query.userId; // Assuming you pass userId as a query parameter
+  //const userId = req.query.userId; // Assuming you pass userId as a query parameter
   const query = `SELECT property_id FROM userliketable WHERE user_id = 1`;
 
   // Execute the query to get the list of property IDs liked by the user
