@@ -79,7 +79,7 @@ export const delproperties = (req, res) => {
   const propertyId = req.params.id;
   const q = " DELETE FROM propertiestable WHERE id = ? ";
 
-  db.query(q, [propetyId], (err, data) => {
+  db.query(q, [propertyId], (err, data) => {
     if (err) return res.send(err);
     return res.json(data);
   });
