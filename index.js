@@ -11,9 +11,17 @@ const app = express();
 
 /// Middleware
 app.use(cors({
-  origin: ["https://production-swart.vercel.app", "https://balaifinder-frontend-deploy.vercel.app"],
+  origin: ["https://production-swart.vercel.app"],
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
+
+/* FOR LOCALHOST
+app.use(cors({
+  origin: ["http://localhost:5173"],
+  credentials: true // Enable credentials (cookies, authorization headers, etc.)
+}));
+*/
+
 app.use(cookieParser());
 app.use(express.json());
 
@@ -100,15 +108,17 @@ app.get("/api/get/option/price", (req, res) => {
 
 // -- SET USERS PREFERENCES --
 app.post("/api/post/submitpreferences", (req, res) => {
-  const { location, house_type, price, near_school, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
-
+  const { location, house_type, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
   // Check if any of the submitted values are the default placeholder values
   if (
     location === "Please Select" ||
     house_type === "Please Select" ||
     price === "Please Select" ||
-    near_school === "Please Select" ||
+    near_elementary === "Please Select" ||
+    near_highschool === "Please Select" ||
+    near_college === "Please Select" ||
     near_church === "Please Select" ||
+    businessready === "Please Select" ||
     near_mall === "Please Select" ||
     bedroom === "Please Select" ||
     bathroom === "Please Select" 
@@ -118,151 +128,69 @@ app.post("/api/post/submitpreferences", (req, res) => {
   }
 
   const updatepref = `
-    UPDATE userpreferencestable
-    SET type = ?, location = ?, price = ?, isnearschool = ?, isnearchurch = ?, isnearmall = ?, numberofbedroom = ?, numberofbathroom = ?, familysize = ?, typeoflot = ?
-    WHERE id = 1`; // Assuming user_id is 1
+  UPDATE userpreferencestable
+  SET type = ?, location = ?, price = ?, nearelementary = ?, nearhighschool = ?, nearcollege = ?, businessready = ?, isnearchurch = ?, isnearmall = ?, numberofbedroom = ?, numberofbathroom = ?, familysize = ?, typeoflot = ?
+  WHERE id = 1`; // Assuming user_id is 1
 
-  db.query(updatepref, [house_type, location, price, near_school, near_church, near_mall, bedroom, bathroom, familysize, typeoflot], (err, result) => {
-      if (err) {
-          console.error("Error updating preference:", err);
-          res.status(500).send("Error updating preference");
-          return;
-      }
-      if (result.affectedRows === 0) {
-          // If no rows were affected, it means there was no existing preference for the user
-          res.status(404).send("No preference found for the user");
-          return;
-      }
-      console.log('Your preferences are all set check if you got a match');
-      // Sending success response
-      res.send('Your preferences are all set check if you got a match');
-  });
-});
-
-app.post("/api/post/submitpriority", (req, res) => {
-  const {
-    location,
-    type,
-    price,
-    nearelementary,
-    nearhighschool,
-    nearcollege,
-    nearmall,
-    nearchurch,
-    bedroom,
-    bathroom,
-    familysize,
-    businessready,
-    lottype
-  } = req.body;
-
-  // Extract user_id from JWT token
-  const token = req.cookies.accessToken;
-  const decodedToken = jwt.verify(token, "secretkey");
-  const userId = decodedToken.id;
-
-  // Check if the user already has preferences in the userprioritytable
-  const sqlCheckExistence = `SELECT * FROM userprioritytable WHERE user_id = ?`;
-
-  db.query(sqlCheckExistence, [userId], (err, result) => {
+  db.query(updatepref, [house_type, location, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot], (err, result) => {
     if (err) {
-      console.error("Error checking existence in userprioritytable:", err);
-      return res.status(500).json({ error: "Error checking existence in userprioritytable" });
+        console.error("Error updating preference:", err);
+        res.status(500).send("Error updating preference");
+        return;
     }
-
-    if (result.length > 0) {
-      // If preferences exist, update them
-      const sqlUpdatePriority = `UPDATE userprioritytable SET
-        locationpriority = ?,
-        typepriority = ?,
-        pricepriority = ?,
-        isnearelementarypriority = ?,
-        isnearhighschoolpriority = ?,
-        isnearcollegepriority = ?,
-        isnearmallpriority = ?,
-        isnearchurchpriority = ?,
-        bedroompriority = ?,
-        bathroompriority = ?,
-        familysizepriority = ?,
-        businessreadypriority = ?,
-        lottypepriority = ?
-        WHERE user_id = ?`;
-
-      const values = [
-        location,
-        type,
-        price,
-        nearelementary,
-        nearhighschool,
-        nearcollege,
-        nearmall,
-        nearchurch,
-        bedroom,
-        bathroom,
-        familysize,
-        businessready,
-        lottype,
-        userId
-      ];
-
-      db.query(sqlUpdatePriority, values, (err, result) => {
-        if (err) {
-          console.error("Error updating preferences:", err);
-          res.status(500).json({ error: "Error updating preferences" });
-          return;
-        }
-        console.log("Preferences updated successfully");
-        res.json({ message: "Preferences updated successfully" });
-      });
-    } else {
-      // If preferences don't exist, insert them
-      const sqlInsertPriority = `INSERT INTO userprioritytable (
-        user_id,
-        locationpriority,
-        typepriority,
-        pricepriority,
-        isnearelementarypriority,
-        isnearhighschoolpriority,
-        isnearcollegepriority,
-        isnearmallpriority,
-        isnearchurchpriority,
-        bedroompriority,
-        bathroompriority,
-        familysizepriority,
-        businessreadypriority,
-        lottypepriority
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-      const values = [
-        userId,
-        location,
-        type,
-        price,
-        nearelementary,
-        nearhighschool,
-        nearcollege,
-        nearmall,
-        nearchurch,
-        bedroom,
-        bathroom,
-        familysize,
-        businessready,
-        lottype
-      ];
-
-      db.query(sqlInsertPriority, values, (err, result) => {
-        if (err) {
-          console.error("Error inserting preferences:", err);
-          res.status(500).json({ error: "Error inserting preferences" });
-          return;
-        }
-        console.log("Preferences inserted successfully");
-        res.json({ message: "Preferences inserted successfully" });
-      });
+    if (result.affectedRows === 0) {
+        // If no rows were affected, it means there was no existing preference for the user
+        res.status(404).send("No preference found for the user");
+        return;
     }
-  });
+    console.log('Your preferences are all set check if you got a match');
+    // Sending success response
+    res.send('Your preferences are all set check if you got a match');
+});
 });
 
+
+
+// -- PRIORITY SCORING RANGES INPUT
+app.post('/api/post/submitpriority', (req, res) => {
+  const rangeValues = req.body;
+  const userId = req.userId; // Assuming you have user ID available in req object
+
+  // Example SQL query to update values in the table
+  const sqlUpdatePriority = `
+    UPDATE userprioritytable
+    SET
+      locationpriority = ?,
+      typepriority = ?,
+      pricepriority = ?,
+      isnearelementarypriority = ?,
+      isnearhighschoolpriority = ?,
+      isnearcollegepriority = ?,
+      isnearmallpriority = ?,
+      isnearchurchpriority = ?,
+      bedroompriority = ?,
+      bathroompriority = ?,
+      familysizepriority = ?,
+      businessreadypriority = ?,
+      lottypepriority = ?
+    WHERE user_id = 1
+  `;
+
+  // Extract values from rangeValues object
+  const values = Object.values(rangeValues);
+  values.push(userId); // Add userId to the values array
+
+  // Execute the SQL query
+  db.query(sqlUpdatePriority, values, (err, result) => {
+    if (err) {
+      console.error('Error updating values in database:', err);
+      res.status(500).json({ message: 'Error updating preferences' });
+      return;
+    }
+    console.log('Values updated in database successfully');
+    res.status(200).json({ message: 'Preferences updated successfully' });
+  });
+});
 //ALD TRIPLE BABY
 // Endpoint for inserting Property data based on action
 app.post("/api/post/ald", (req, res) => {
