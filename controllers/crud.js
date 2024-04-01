@@ -44,7 +44,7 @@ export const addproperties = (req, res) => {
 };
 
 export const updproperties = (req, res) => {
-  const propetyId = req.params.id;
+  const propertyId = req.params.id;
   const q =
     "UPDATE propertiestable SET `name`= ?, `type`= ?, `location`= ?, `price`= ?, `isnearschool`= ?, `isnearchurch`= ?, `isnearmall`= ?, `numberofbedroom`= ?, `numberofbathroom`= ?, `typeoflot`= ?, `familysize`= ?, `nearelementary`= ?, `nearhighschool`= ?, `nearcollege`= ?, `plantodobusiness`= ?, `monthly`= ?, `description`= ?, `imgsrc`= ? WHERE id = ?";
 
@@ -69,7 +69,7 @@ export const updproperties = (req, res) => {
     req.body.imgsrc,
   ];
 
-  db.query(q, [...values, propetyId], (err, data) => {
+  db.query(q, [...values, propertyId], (err, data) => {
     if (err) return res.send(err);
     return res.json(data);
   });
