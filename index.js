@@ -149,6 +149,82 @@ app.post("/api/post/submitpreferences", (req, res) => {
 });
 });
 
+// -- GET LIKES --
+
+app.get('/api/get/likes', (req, res) => {
+  // Query to fetch property IDs that the user likes
+  const userId = req.query.userId; // Assuming you pass userId as a query parameter
+  const query = `SELECT property_id FROM userliketable WHERE user_id = 1`;
+
+  // Execute the query to get the list of property IDs liked by the user
+  db.query(query, (error, results) => {
+      if (error) {
+          console.error('Error fetching liked properties:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+      }
+
+      // Extract the property IDs from the query results
+      const propertyIds = results.map(result => result.property_id);
+
+      // If there are no property IDs, return an empty array
+      if (propertyIds.length === 0) {
+          res.json([]);
+          return;
+      }
+
+      // Query to fetch properties data based on the property IDs
+      const propertiesQuery = `SELECT * FROM propertiestable WHERE id IN (${propertyIds.join(',')})`;
+
+      // Execute the query to fetch properties data
+      db.query(propertiesQuery, (error, properties) => {
+          if (error) {
+              console.error('Error fetching properties:', error);
+              res.status(500).json({ error: 'Internal Server Error' });
+              return;
+          }
+          // Send the fetched properties data as JSON response
+          res.json(properties);
+      });
+  });
+});
+
+// POST FOR APPLICATION
+app.post('/api/post/apply', (req, res) => {
+  const { propertyId, firstName, lastName, email } = req.body;
+  const userId = 1; // Assuming user_id is 1
+
+  // Check if the combination of user_id and property_id already exists
+  const sqlCheckExistence = `SELECT * FROM userapplicationtable WHERE user_id = ? AND property_id = ?`;
+
+  db.query(sqlCheckExistence, [userId, propertyId], (err, result) => {
+    if (err) {
+      console.error('Error checking existence in userapplicationtable:', err);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+    // If the result contains any rows, it means the combination already exists
+    if (result.length > 0) {
+      console.log('You already applied');
+      return res.status(400).json({ message: 'You already applied' });
+    }
+
+    // If the combination doesn't exist, insert new data
+    const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, first_name, last_name, email, status) VALUES (?, ?, ?, ?, ?, "PENDING")`;
+    const values = [userId, propertyId, firstName, lastName, email];
+
+    // Execute the query to insert new data
+    db.query(sqlInsertApplication, values, (err, result) => {
+      if (err) {
+        console.error('Error inserting data into userapplicationtable:', err);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      console.log('Data inserted into userapplicationtable:', result);
+      res.status(200).json({ message: 'Data inserted successfully' });
+    });
+  });
+});
+
 
 
 // -- PRIORITY SCORING RANGES INPUT
