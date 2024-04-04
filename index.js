@@ -16,27 +16,6 @@ app.use(cors({
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
 
-// Middleware function to extract user ID from JWT token
-const extractUserId = (req, res, next) => {
-  const token = req.cookies.accessToken;
-  if (token) {
-    jwt.verify(token, "secretkey", (err, decodedToken) => {
-      if (err) {
-        console.error("Error verifying token:", err);
-        req.userId = null; // Set userId to null if token verification fails
-      } else {
-        req.userId = decodedToken.id; // Extract userId from decoded token
-      }
-      next();
-    });
-  } else {
-    req.userId = null; // Set userId to null if no token is provided
-    next();
-  }
-};
-
-app.use(extractUserId);
-
 /* FOR LOCALHOST
 app.use(cors({
   origin: ["http://localhost:5173"],
@@ -131,11 +110,6 @@ app.get("/api/get/option/price", (req, res) => {
 
 // -- SET USERS PREFERENCES --
 app.post("/api/post/submitpreferences", (req, res) => {
-  const userId = req.userId; // Extracted userId from the request object
-  if (!userId) {
-    return res.status(401).send("Unauthorized");
-  }
-  
   const { location, house_type, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
   // Check if any of the submitted values are the default placeholder values
   if (
@@ -158,9 +132,9 @@ app.post("/api/post/submitpreferences", (req, res) => {
   const updatepref = `
   UPDATE userpreferencestable
   SET type = ?, location = ?, price = ?, nearelementary = ?, nearhighschool = ?, nearcollege = ?, businessready = ?, isnearchurch = ?, isnearmall = ?, numberofbedroom = ?, numberofbathroom = ?, familysize = ?, typeoflot = ?
-  WHERE user_id = ?`; // Assuming user_id is 1
+  WHERE id = 1`; // Assuming user_id is 1
 
-  db.query(updatepref, [house_type, location, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot, userId], (err, result) => {
+  db.query(updatepref, [house_type, location, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot], (err, result) => {
     if (err) {
         console.error("Error updating preference:", err);
         res.status(500).send("Error updating preference");
@@ -200,7 +174,7 @@ app.post('/api/post/submitpriority', (req, res) => {
       familysizepriority = ?,
       businessreadypriority = ?,
       lottypepriority = ?
-    WHERE user_id = ?
+    WHERE user_id = 1
   `;
 
   // Extract values from rangeValues object
@@ -208,7 +182,7 @@ app.post('/api/post/submitpriority', (req, res) => {
   values.push(userId); // Add userId to the values array
 
   // Execute the SQL query
-  db.query(sqlUpdatePriority, values, [userId], (err, result) => {
+  db.query(sqlUpdatePriority, values, (err, result) => {
     if (err) {
       console.error('Error updating values in database:', err);
       res.status(500).json({ message: 'Error updating preferences' });
@@ -278,9 +252,7 @@ app.post("/api/post/ald", (req, res) => {
 // -- GET LIKES --
 
 app.get('/api/get/likes', (req, res) => {
-  const userId = req.userId; // Extracted userId from the request object
-
-  const query = `SELECT property_id FROM userliketable WHERE user_id = ?`;
+  const query = `SELECT property_id FROM userliketable WHERE user_id = 1`;
 
   // Execute the query to get the list of property IDs liked by the user
   db.query(query, (error, results) => {
@@ -303,7 +275,7 @@ app.get('/api/get/likes', (req, res) => {
       const propertiesQuery = `SELECT * FROM propertiestable WHERE id IN (${propertyIds.join(',')})`;
 
       // Execute the query to fetch properties data
-      db.query(propertiesQuery, [userId], (error, properties) => {
+      db.query(propertiesQuery, (error, properties) => {
           if (error) {
               console.error('Error fetching properties:', error);
               res.status(500).json({ error: 'Internal Server Error' });
@@ -318,7 +290,7 @@ app.get('/api/get/likes', (req, res) => {
 // POST FOR APPLICATION
 app.post('/api/post/apply', (req, res) => {
   const { propertyId, firstName, lastName, email } = req.body;
-  const userId = req.userId; // Extracted userId from the request object
+  const userId = 1; // Assuming user_id is 1
 
   // Check if the combination of user_id and property_id already exists
   const sqlCheckExistence = `SELECT * FROM userapplicationtable WHERE user_id = ? AND property_id = ?`;
@@ -340,7 +312,7 @@ app.post('/api/post/apply', (req, res) => {
     const values = [userId, propertyId, firstName, lastName, email];
 
     // Execute the query to insert new data
-    db.query(sqlInsertApplication, values, [userId, propertyId], (err, result) => {
+    db.query(sqlInsertApplication, values, (err, result) => {
       if (err) {
         console.error('Error inserting data into userapplicationtable:', err);
         return res.status(500).json({ error: 'Internal Server Error' });
