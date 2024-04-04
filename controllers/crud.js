@@ -14,25 +14,25 @@ export const getproperties = (req, res) => {
 
 export const addproperties = (req, res) => {
   const q =
-    "INSERT INTO propertiestable (`name`, `type`, `location`, `price`, `isnearschool`, `isnearchurch`, `isnearmall`, `numberofbedroom`, `numberofbathroom`, `typeoflot`, `familysize`, `nearelementary`, `nearhighschool`, `nearcollege`, `plantodobusiness`, `monthly`, `description`, `imgsrc`) VALUES (?)";
+    "INSERT INTO propertiestable (`name`,`location`, `type`, `price`, `monthly`, `nearelementary`, `nearhighschool`, `nearcollege`, `isnearschool`,`isnearmall`, `isnearchurch`, `numberofbedroom`, `numberofbathroom`, `typeoflot`, `familysize`, `businessready`, `description`, `imgsrc`) VALUES (?)";
 
   const values = [
     req.body.name,
-    req.body.type,
     req.body.location,
+    req.body.type,
     req.body.price,
+    req.body.monthly,
+    req.body.nearelementary,
+    req.body.nearhighschool,
+    req.body.nearcollege,
     req.body.isnearschool,
-    req.body.isnearchurch,
     req.body.isnearmall,
+    req.body.isnearchurch,
     req.body.numberofbedroom,
     req.body.numberofbathroom,
     req.body.typeoflot,
     req.body.familysize,
-    req.body.nearelementary,
-    req.body.nearhighschool,
-    req.body.nearcollege,
     req.body.plantodobusiness,
-    req.body.monthly,
     req.body.description,
     req.body.imgsrc,
   ];
