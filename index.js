@@ -36,6 +36,7 @@ app.use((req, res, next) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/crud", crudRoutes)
 app.get("/api/get", showAlgorithmResult);
 
 
@@ -321,6 +322,7 @@ app.post('/api/post/apply', (req, res) => {
     });
   });
 });
+
 
 
 app.options("/api/auth/login", (req, res) => {
