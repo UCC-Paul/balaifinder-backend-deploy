@@ -108,6 +108,23 @@ app.get("/api/get/option/price", (req, res) => {
   });
 });
 
+// -- GET MESSAGES PRICE --
+app.get("/api/messages", (req, res) => {
+  // Define SQL query to fetch messages
+  const sqlGetMessages = "SELECT * FROM userapplicationtable";
+
+  // Execute the query
+  db.query(sqlGetMessages, (err, result) => {
+    if (err) {
+      console.error("Error fetching messages:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    // Send the messages as JSON response
+    res.json(result);
+  });
+});
+
 // -- SET USERS PREFERENCES --
 app.post("/api/post/submitpreferences", (req, res) => {
   const { location, house_type, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
