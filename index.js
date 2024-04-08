@@ -57,7 +57,6 @@ app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => 
   console.log("Received property data:", req.body); // Log received property data
 
   const sqlAddproperty =
-    //"INSERT INTO propertiestable (`name`, `location`, `type`, `price`, `monthly`, `nearelementary`, `nearhighschool`, `nearcollege`, `isnearmall`, `isnearchurch`, `numberofbedroom`, `numberofbathroom`, `typeoflot`, `familysize`, `businessready`, `imgsrc`) VALUES (?, ?, ?)";
     "INSERT INTO propertiestable (`name`, `location`, `type`, `price`, `monthly`, `nearelementary`, `nearhighschool`, `nearcollege`, `isnearmall`, `isnearchurch`, `numberofbedroom`, `numberofbathroom`, `typeoflot`, `familysize`, `businessready`, `description`, `imgsrc`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
   const values = [
