@@ -7,8 +7,20 @@ import cors from "cors";
 import { db } from "./connect.js";
 import jwt from "jsonwebtoken";
 import { showAlgorithmResult } from "./controllers/algorithm.js";
+import multer from 'multer';
 
 const app = express();
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Specify the directory where uploaded files should be stored
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname); // Use the original file name as the uploaded file name
+  }
+});
+
+// Initialize multer with the configured storage options
+const upload = multer({ storage: storage });
 
 /// Middleware
 app.use(cors({
@@ -36,9 +48,47 @@ app.use((req, res, next) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/crud", crudRoutes)
+//app.use("/api/crud", crudRoutes)
 app.get("/api/get", showAlgorithmResult);
 
+
+
+app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => {
+  console.log("Received property data:", req.body); // Log received property data
+
+  const sqlAddproperty =
+    //"INSERT INTO propertiestable (`name`, `location`, `type`, `price`, `monthly`, `nearelementary`, `nearhighschool`, `nearcollege`, `isnearmall`, `isnearchurch`, `numberofbedroom`, `numberofbathroom`, `typeoflot`, `familysize`, `businessready`, `imgsrc`) VALUES (?, ?, ?)";
+    "INSERT INTO propertiestable (`name`, `location`, `type`, `price`, `monthly`, `nearelementary`, `nearhighschool`, `nearcollege`, `isnearmall`, `isnearchurch`, `numberofbedroom`, `numberofbathroom`, `typeoflot`, `familysize`, `businessready`, `description`, `imgsrc`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+  const values = [
+    req.body.name,
+    req.body.location,
+    req.body.type,
+    req.body.price,
+    req.body.monthly,
+    req.body.nearelementary,
+    req.body.nearhighschool,
+    req.body.nearcollege,
+    req.body.nearmall,
+    req.body.nearchurch,
+    req.body.numBedrooms,
+    req.body.numBathrooms,
+    req.body.typeoflot,
+    req.body.familysize,
+    req.body.businessready,
+    req.body.description,
+    req.file.filename, // Use req.file.filename to get the filename of the uploaded image
+  ];
+
+  db.query(sqlAddproperty, values, (err, data) => {
+    if (err) {
+      console.error("Error adding property:", err);
+      return res.send(err);
+    }
+    console.log("Property added successfully:", data);
+    return res.json(data);
+  });
+});
 
 // -- GET PRODUCT DETAILS BY ID --
 app.get("/api/get/properties/:id", (req, res) => {
