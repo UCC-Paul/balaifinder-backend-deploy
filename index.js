@@ -416,6 +416,13 @@ app.options("/api/auth/login", (req, res) => {
   res.sendStatus(200);
 });
 
+
+app.listen(() => {
+  console.log("SERVER IS LIVE");
+});
+
+/* ONLY FOR LOCALHOST
 app.listen(8800, () => {
   console.log("API working");
 });
+*/
