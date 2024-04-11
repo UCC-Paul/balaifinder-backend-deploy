@@ -217,7 +217,6 @@ app.post("/api/post/submitpreferences", (req, res) => {
 });
 });
 
-
 // -- PRIORITY SCORING RANGES INPUT
 app.post('/api/post/submitpriority', (req, res) => {
   const rangeValues = req.body;
@@ -314,9 +313,7 @@ app.post("/api/post/ald", (req, res) => {
   });
 });
 
-
 // -- GET LIKES --
-
 app.get('/api/get/likes', (req, res) => {
   const query = `SELECT property_id FROM userliketable WHERE user_id = 1`;
 
@@ -353,7 +350,7 @@ app.get('/api/get/likes', (req, res) => {
   });
 });
 
-// POST FOR APPLICATION
+// -- USER APPLPLY FOR HOUSE
 app.post('/api/post/apply', (req, res) => {
   const { propertyId, firstName, lastName, email } = req.body;
   const userId = 1; // Assuming user_id is 1
