@@ -52,7 +52,7 @@ app.use("/api/users", userRoutes);
 app.get("/api/get", showAlgorithmResult);
 
 
-
+// -- REALTOR ADD PROPERTY --
 app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => {
   console.log("Received property data:", req.body); // Log received property data
 
@@ -86,6 +86,30 @@ app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => 
     }
     console.log("Property added successfully:", data);
     return res.json(data);
+  });
+});
+
+// -- REALTOR DELETE PROPERTY BY ID --
+app.delete("/api/delete/crud/delproperties/:id", (req, res) => {
+  const propId = req.params.id;
+
+  // SQL query to delete the property with the given ID
+  const sqlDeleteProperty = "DELETE FROM propertiestable WHERE id = ?";
+
+  // Execute the SQL query
+  db.query(sqlDeleteProperty, [propId], (err, result) => {
+    if (err) {
+      console.error("Error deleting property:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    // Check if any rows were affected
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Property not found" });
+    }
+
+    // Send success response
+    res.json({ message: "Property deleted successfully" });
   });
 });
 
