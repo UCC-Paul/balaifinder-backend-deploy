@@ -113,6 +113,66 @@ app.delete("/api/delete/crud/delproperties/:id", (req, res) => {
   });
 });
 
+// -- REALTOR UPDATE PROPERTY --
+app.put("/api/update/crud/updproperties/:id", (req, res) => {
+  const propId = req.params.id;
+  const updatedProperty = req.body;
+
+  const sqlUpdateProperty = `
+    UPDATE propertiestable
+    SET
+      name = ?,
+      location = ?,
+      type = ?,
+      price = ?,
+      monthly = ?,
+      nearelementary = ?,
+      nearhighschool = ?,
+      nearcollege = ?,
+      isnearmall = ?,
+      isnearchurch = ?,
+      numberofbedroom = ?,
+      numberofbathroom = ?,
+      typeoflot = ?,
+      familysize = ?,
+      businessready = ?,
+      description = ?
+    WHERE id = ?
+  `;
+
+  const values = [
+    updatedProperty.name,
+    updatedProperty.location,
+    updatedProperty.type,
+    updatedProperty.price,
+    updatedProperty.monthly,
+    updatedProperty.nearelementary,
+    updatedProperty.nearhighschool,
+    updatedProperty.nearcollege,
+    updatedProperty.nearmall,
+    updatedProperty.nearchurch,
+    updatedProperty.numBedrooms,
+    updatedProperty.numBathrooms,
+    updatedProperty.typeoflot,
+    updatedProperty.familysize,
+    updatedProperty.businessready,
+    updatedProperty.description,
+    propId,
+  ];
+
+  db.query(sqlUpdateProperty, values, (err, result) => {
+    if (err) {
+      console.error("Error updating property:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Property not found" });
+    }
+    console.log("Property updated successfully");
+    res.json({ message: "Property updated successfully" });
+  });
+});
+
 // -- GET PRODUCT DETAILS BY ID --
 app.get("/api/get/properties/:id", (req, res) => {
   const productId = req.params.id;
