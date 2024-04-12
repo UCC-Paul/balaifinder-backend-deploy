@@ -8,8 +8,20 @@ import cors from "cors";
 import { db } from "./connect.js";
 import jwt from "jsonwebtoken";
 import { showAlgorithmResult } from "./controllers/algorithm.js";
+import multer from 'multer';
 
 const app = express();
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Specify the directory where uploaded files should be stored
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname); // Use the original file name as the uploaded file name
+  }
+});
+
+// Initialize multer with the configured storage options
+const upload = multer({ storage: storage });
 
 /// Middleware
 app.use(cors({
@@ -41,6 +53,127 @@ app.use("/api/crud", crudRoutes);
 app.use("/api/relauth", relauthRoutes);
 app.get("/api/get", showAlgorithmResult);
 
+
+// -- REALTOR ADD PROPERTY --
+app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => {
+  console.log("Received property data:", req.body); // Log received property data
+
+  const sqlAddproperty =
+    "INSERT INTO propertiestable (`name`, `location`, `type`, `price`, `monthly`, `nearelementary`, `nearhighschool`, `nearcollege`, `isnearmall`, `isnearchurch`, `numberofbedroom`, `numberofbathroom`, `typeoflot`, `familysize`, `businessready`, `description`, `imgsrc`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+  const values = [
+    req.body.name,
+    req.body.location,
+    req.body.type,
+    req.body.price,
+    req.body.monthly,
+    req.body.nearelementary,
+    req.body.nearhighschool,
+    req.body.nearcollege,
+    req.body.nearmall,
+    req.body.nearchurch,
+    req.body.numBedrooms,
+    req.body.numBathrooms,
+    req.body.typeoflot,
+    req.body.familysize,
+    req.body.businessready,
+    req.body.description,
+    req.file.filename, // Use req.file.filename to get the filename of the uploaded image
+  ];
+
+  db.query(sqlAddproperty, values, (err, data) => {
+    if (err) {
+      console.error("Error adding property:", err);
+      return res.send(err);
+    }
+    console.log("Property added successfully:", data);
+    return res.json(data);
+  });
+});
+
+// -- REALTOR DELETE PROPERTY BY ID --
+app.delete("/api/delete/crud/delproperties/:id", (req, res) => {
+  const propId = req.params.id;
+
+  // SQL query to delete the property with the given ID
+  const sqlDeleteProperty = "DELETE FROM propertiestable WHERE id = ?";
+
+  // Execute the SQL query
+  db.query(sqlDeleteProperty, [propId], (err, result) => {
+    if (err) {
+      console.error("Error deleting property:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    // Check if any rows were affected
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Property not found" });
+    }
+
+    // Send success response
+    res.json({ message: "Property deleted successfully" });
+  });
+});
+
+// -- REALTOR UPDATE PROPERTY --
+app.put("/api/update/crud/updproperties/:id", (req, res) => {
+  const propId = req.params.id;
+  const updatedProperty = req.body;
+
+  const sqlUpdateProperty = `
+    UPDATE propertiestable
+    SET
+      name = ?,
+      location = ?,
+      type = ?,
+      price = ?,
+      monthly = ?,
+      nearelementary = ?,
+      nearhighschool = ?,
+      nearcollege = ?,
+      isnearmall = ?,
+      isnearchurch = ?,
+      numberofbedroom = ?,
+      numberofbathroom = ?,
+      typeoflot = ?,
+      familysize = ?,
+      businessready = ?,
+      description = ?
+    WHERE id = ?
+  `;
+
+  const values = [
+    updatedProperty.name,
+    updatedProperty.location,
+    updatedProperty.type,
+    updatedProperty.price,
+    updatedProperty.monthly,
+    updatedProperty.nearelementary,
+    updatedProperty.nearhighschool,
+    updatedProperty.nearcollege,
+    updatedProperty.nearmall,
+    updatedProperty.nearchurch,
+    updatedProperty.numBedrooms,
+    updatedProperty.numBathrooms,
+    updatedProperty.typeoflot,
+    updatedProperty.familysize,
+    updatedProperty.businessready,
+    updatedProperty.description,
+    propId,
+  ];
+
+  db.query(sqlUpdateProperty, values, (err, result) => {
+    if (err) {
+      console.error("Error updating property:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Property not found" });
+    }
+    console.log("Property updated successfully");
+    res.json({ message: "Property updated successfully" });
+  });
+});
 
 // -- GET PRODUCT DETAILS BY ID --
 app.get("/api/get/properties/:id", (req, res) => {
@@ -170,7 +303,6 @@ app.post("/api/post/submitpreferences", (req, res) => {
 });
 });
 
-
 // -- PRIORITY SCORING RANGES INPUT
 app.post('/api/post/submitpriority', (req, res) => {
   const rangeValues = req.body;
@@ -267,9 +399,7 @@ app.post("/api/post/ald", (req, res) => {
   });
 });
 
-
 // -- GET LIKES --
-
 app.get('/api/get/likes', (req, res) => {
   const query = `SELECT property_id FROM userliketable WHERE user_id = 1`;
 
@@ -306,7 +436,7 @@ app.get('/api/get/likes', (req, res) => {
   });
 });
 
-// POST FOR APPLICATION
+// -- USER APPLPLY FOR HOUSE
 app.post('/api/post/apply', (req, res) => {
   const { propertyId, firstName, lastName, email } = req.body;
   const userId = 1; // Assuming user_id is 1
@@ -348,6 +478,13 @@ app.options("/api/auth/login", (req, res) => {
   res.sendStatus(200);
 });
 
+
+app.listen(() => {
+  console.log("SERVER IS LIVE");
+});
+
+/* ONLY FOR LOCALHOST
 app.listen(8800, () => {
   console.log("API working");
 });
+*/
