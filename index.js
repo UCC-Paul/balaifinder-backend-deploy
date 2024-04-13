@@ -2,7 +2,8 @@ import express from "express";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import crudRoutes from "./routes/crud.js";
-import relauthRoutes from "./routes/relauth.js"
+import relauthRoutes from "./routes/relauth.js";
+import userRoutes from "./routes/users.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { db } from "./connect.js";
@@ -53,6 +54,8 @@ app.use("/api/crud", crudRoutes);
 app.use("/api/relauth", relauthRoutes);
 app.get("/api/get", showAlgorithmResult);
 
+//User Profile
+app.use("/api/user", userRoutes);
 
 // -- REALTOR ADD PROPERTY --
 app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => {
