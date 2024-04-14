@@ -3,7 +3,6 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import crudRoutes from "./routes/crud.js";
 import relauthRoutes from "./routes/relauth.js";
-import userRoutes from "./routes/users.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { db } from "./connect.js";
