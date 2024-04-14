@@ -53,6 +53,24 @@ app.use("/api/crud", crudRoutes);
 app.use("/api/relauth", relauthRoutes);
 app.get("/api/get", showAlgorithmResult);
 
+
+// -- GET APPLICATIONS --
+app.get("/api/get/applications", (req, res) => {
+  // Define SQL query to fetch messages
+  const sqlGetMessages = "SELECT * FROM userapplicationtable";
+
+  // Execute the query
+  db.query(sqlGetMessages, (err, result) => {
+    if (err) {
+      console.error("Error fetching messages:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    // Send the messages as JSON response
+    res.json(result);
+  });
+});
+
 // -- REALTOR ADD PROPERTY --
 app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => {
   console.log("Received property data:", req.body); // Log received property data
