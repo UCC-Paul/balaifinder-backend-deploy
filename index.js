@@ -54,9 +54,6 @@ app.use("/api/crud", crudRoutes);
 app.use("/api/relauth", relauthRoutes);
 app.get("/api/get", showAlgorithmResult);
 
-//User Profile
-app.use("/api/user", userRoutes);
-
 // -- REALTOR ADD PROPERTY --
 app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => {
   console.log("Received property data:", req.body); // Log received property data
