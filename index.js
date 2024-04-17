@@ -25,7 +25,7 @@ const upload = multer({ storage: storage });
 
 /// Middleware
 app.use(cors({
-  origin: ["https://production-swart.vercel.app"],
+  origin: ["https://balaifinder.vercel.app"],
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
 
