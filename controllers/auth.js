@@ -2,76 +2,80 @@ import { db } from "../connect.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-export const register = (req, res) => {
-  //CHECK USER IF EXISTS
-
-  const q = "SELECT * FROM users WHERE email = ?";
-
-  db.query(q, [req.body.email], (err, data) => {
-    if (err) return res.status(500).json(err);
-    if (data.length) return res.status(409).json("User already exists!");
-    //CREATE A NEW USER
-    //HASH PASSWORD
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(req.body.password, salt);
-
-    const q =
-      "INSERT INTO users (`first_name`, `last_name`, `email`, `password`, `bday`, `gender`, `address`, `region`, `province`, `municipality`) VALUE (?)";
-
-    const values = [
-      req.body.first_name,
-      req.body.last_name,
+export const register = async (req, res) => {
+  try {
+    // Check if user exists
+    const [existingUser] = await db.query("SELECT * FROM users WHERE email = ?", [
       req.body.email,
-      hashedPassword,
-      req.body.bday,
-      req.body.gender,
-      req.body.address,
-      req.body.region,
-      req.body.province,
-      req.body.municipality,
-    ];
+    ]);
 
-    db.query(q, [values], (err, data) => {
-      if (err) return res.status(500).json(err);
-      return res.status(200).json("User has been created.");
-    });
-  });
+    if (existingUser.length > 0) {
+      return res.status(409).json("User already exists!");
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+    // Insert new user
+    const newUser = {
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      email: req.body.email,
+      password: hashedPassword,
+      bday: req.body.bday,
+      gender: req.body.gender,
+      address: req.body.address,
+      region: req.body.region,
+      province: req.body.province,
+      municipality: req.body.municipality,
+    };
+
+    await db.query("INSERT INTO users SET ?", [newUser]);
+
+    res.status(200).json("User has been created.");
+  } catch (error) {
+    console.error("Error registering user:", error);
+    res.status(500).json("Internal server error");
+  }
 };
 
-export const login = (req, res) => {
-  const q = "SELECT * FROM users WHERE email = ?";
+export const login = async (req, res) => {
+  try {
+    const [user] = await db.query("SELECT * FROM users WHERE email = ?", [
+      req.body.email,
+    ]);
 
-  db.query(q, [req.body.email], (err, data) => {
-    if (err) return res.status(500).json(err);
-    if (data.length === 0) return res.status(404).json("User not found!");
+    if (user.length === 0) {
+      return res.status(404).json("User not found!");
+    }
 
-    const checkPassword = bcrypt.compareSync(
-      req.body.password,
-      data[0].password
-    );
+    const checkPassword = await bcrypt.compare(req.body.password, user[0].password);
 
-    if (!checkPassword)
+    if (!checkPassword) {
       return res.status(400).json("Wrong password or email!");
+    }
 
-    const token = jwt.sign({ id: data[0].id }, "secretkey");
+    const token = jwt.sign({ id: user[0].id }, "secretkey", { expiresIn: "1h" });
 
-    const { password, ...others } = data[0];
+    const { password, ...userData } = user[0]; // Exclude password from response
 
-    res
-      .cookie("accessToken", token, {
-        httpOnly: true,
-      })
-      .status(200)
-      .json(others);
-  });
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      // Secure: true, // Enable if using HTTPS
+      // SameSite: "None", // Enable for cross-site requests with HTTPS
+    }).status(200).json(userData);
+  } catch (error) {
+    console.error("Error logging in:", error);
+    res.status(500).json("Internal server error");
+  }
 };
 
 export const logout = (req, res) => {
-  res
-    .clearCookie("accessToken", {
-      secure: true,
-      sameSite: "none",
-    })
-    .status(200)
-    .json("User has been logged out.");
+  try {
+    res.clearCookie("accessToken").status(200).json("User has been logged out.");
+  } catch (error) {
+    console.error("Error logging out:", error);
+    res.status(500).json("Internal server error");
+  }
 };
