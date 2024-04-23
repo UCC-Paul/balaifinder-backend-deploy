@@ -11,17 +11,6 @@ import { showAlgorithmResult } from "./controllers/algorithm.js";
 import multer from 'multer';
 
 const app = express();
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Specify the directory where uploaded files should be stored
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname); // Use the original file name as the uploaded file name
-  }
-});
-
-// Initialize multer with the configured storage options
-const upload = multer({ storage: storage });
 
 /// Middleware
 app.use(cors({
@@ -72,7 +61,7 @@ app.get("/api/get/applications", (req, res) => {
 });
 
 // -- REALTOR ADD PROPERTY --
-app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => {
+app.post("/api/post/crud/addproperties", (req, res) => {
   console.log("Received property data:", req.body); // Log received property data
 
   const sqlAddproperty =
@@ -95,7 +84,7 @@ app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => 
     req.body.familysize,
     req.body.businessready,
     req.body.description,
-    req.file.filename, // Use req.file.filename to get the filename of the uploaded image
+    req.body.imgsrc,
   ];
 
   db.query(sqlAddproperty, values, (err, data) => {
