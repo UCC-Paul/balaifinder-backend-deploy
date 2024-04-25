@@ -144,7 +144,8 @@ app.put("/api/update/crud/updproperties/:id", (req, res) => {
       typeoflot = ?,
       familysize = ?,
       businessready = ?,
-      description = ?
+      description = ?,
+      imgsrc = ?
     WHERE id = ?
   `;
 
@@ -165,6 +166,7 @@ app.put("/api/update/crud/updproperties/:id", (req, res) => {
     updatedProperty.familysize,
     updatedProperty.businessready,
     updatedProperty.description,
+    updatedProperty.imgsrc,
     propId,
   ];
 
