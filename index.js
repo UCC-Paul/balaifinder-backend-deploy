@@ -2,7 +2,7 @@ import express from "express";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import crudRoutes from "./routes/crud.js";
-import relauthRoutes from "./routes/relauth.js"
+import relauthRoutes from "./routes/relauth.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { db } from "./connect.js";
@@ -11,21 +11,10 @@ import { showAlgorithmResult } from "./controllers/algorithm.js";
 import multer from 'multer';
 
 const app = express();
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Specify the directory where uploaded files should be stored
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname); // Use the original file name as the uploaded file name
-  }
-});
-
-// Initialize multer with the configured storage options
-const upload = multer({ storage: storage });
 
 /// Middleware
 app.use(cors({
-  origin: ["https://production-swart.vercel.app"],
+  origin: ["https://balaifinder.vercel.app"],
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
 
@@ -54,8 +43,25 @@ app.use("/api/relauth", relauthRoutes);
 app.get("/api/get", showAlgorithmResult);
 
 
+// -- GET APPLICATIONS --
+app.get("/api/get/applications", (req, res) => {
+  // Define SQL query to fetch messages
+  const sqlGetMessages = "SELECT * FROM userapplicationtable";
+
+  // Execute the query
+  db.query(sqlGetMessages, (err, result) => {
+    if (err) {
+      console.error("Error fetching messages:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    // Send the messages as JSON response
+    res.json(result);
+  });
+});
+
 // -- REALTOR ADD PROPERTY --
-app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => {
+app.post("/api/post/crud/addproperties", (req, res) => {
   console.log("Received property data:", req.body); // Log received property data
 
   const sqlAddproperty =
@@ -78,7 +84,7 @@ app.post("/api/post/crud/addproperties", upload.single('image1'), (req, res) => 
     req.body.familysize,
     req.body.businessready,
     req.body.description,
-    req.file.filename, // Use req.file.filename to get the filename of the uploaded image
+    req.body.imgsrc,
   ];
 
   db.query(sqlAddproperty, values, (err, data) => {
@@ -138,7 +144,8 @@ app.put("/api/update/crud/updproperties/:id", (req, res) => {
       typeoflot = ?,
       familysize = ?,
       businessready = ?,
-      description = ?
+      description = ?,
+      imgsrc = ?
     WHERE id = ?
   `;
 
@@ -159,6 +166,7 @@ app.put("/api/update/crud/updproperties/:id", (req, res) => {
     updatedProperty.familysize,
     updatedProperty.businessready,
     updatedProperty.description,
+    updatedProperty.imgsrc,
     propId,
   ];
 
@@ -478,13 +486,14 @@ app.options("/api/auth/login", (req, res) => {
   res.sendStatus(200);
 });
 
-
+/*
 app.listen(() => {
   console.log("SERVER IS LIVE");
 });
+*/
 
-/* ONLY FOR LOCALHOST
+
 app.listen(8800, () => {
   console.log("API working");
 });
-*/
+

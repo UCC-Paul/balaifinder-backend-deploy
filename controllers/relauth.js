@@ -15,8 +15,7 @@ export const relregister = (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
-    const q =
-      "INSERT INTO realtor (`first_name`, `last_name`, `email`, `password`, `gender`) VALUE (?)";
+    const q = "INSERT INTO realtor (`first_name`, `last_name`, `email`, `password`, `gender`, `company`) VALUE (?)";
 
     const values = [
       req.body.first_name,
@@ -24,6 +23,7 @@ export const relregister = (req, res) => {
       req.body.email,
       hashedPassword,
       req.body.gender,
+      req.body.company,
     ];
 
     db.query(q, [values], (err, data) => {
