@@ -37,7 +37,7 @@ export const rellogin = (req, res) => {
   const q = "SELECT * FROM realtor WHERE email = ?";
 
   db.query(q, [req.body.email], (err, data) => {
-    if (err) return res.status(500).json(err);
+    if (err) return res.status(500).json(err);  
     if (data.length === 0) return res.status(404).json("Realtor not found!");
 
     const checkPassword = bcrypt.compareSync(
@@ -55,6 +55,8 @@ export const rellogin = (req, res) => {
     res
       .cookie("accessToken", token, {
         httpOnly: true,
+        sameSite: "none",
+        path: "/",
       })
       .status(200)
       .json(others);
