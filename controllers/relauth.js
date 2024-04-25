@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 export const relregister = (req, res) => {
   //CHECK USER IF EXISTS
 
-  const q = "SELECT * FROM realtors WHERE email = ?";
+  const q = "SELECT * FROM realtor WHERE email = ?";
 
   db.query(q, [req.body.email], (err, data) => {
     if (err) return res.status(500).json(err);
@@ -16,7 +16,7 @@ export const relregister = (req, res) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, salt);
 
     const q =
-      "INSERT INTO realtors (`first_name`, `last_name`, `email`, `password`, `gender`) VALUE (?)";
+      "INSERT INTO realtor (`first_name`, `last_name`, `email`, `password`, `gender`) VALUE (?)";
 
     const values = [
       req.body.first_name,
@@ -34,7 +34,7 @@ export const relregister = (req, res) => {
 };
 
 export const rellogin = (req, res) => {
-  const q = "SELECT * FROM realtors WHERE email = ?";
+  const q = "SELECT * FROM realtor WHERE email = ?";
 
   db.query(q, [req.body.email], (err, data) => {
     if (err) return res.status(500).json(err);
