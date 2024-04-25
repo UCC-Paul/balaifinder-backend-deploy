@@ -20,10 +20,10 @@ export const relregister = (req, res) => {
     const values = [
       req.body.first_name,
       req.body.last_name,
-      req.body.email,
-      hashedPassword,
       req.body.gender,
       req.body.company,
+      req.body.email,
+      hashedPassword,
     ];
 
     db.query(q, [values], (err, data) => {
