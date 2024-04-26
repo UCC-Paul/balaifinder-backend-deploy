@@ -57,6 +57,7 @@ export const rellogin = (req, res) => {
         httpOnly: true,
         sameSite: "none",
         path: "/",
+        Secure: HttpOnly,
       })
       .status(200)
       .json(others);
