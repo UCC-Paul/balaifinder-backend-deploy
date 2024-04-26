@@ -55,8 +55,6 @@ export const rellogin = (req, res) => {
     res
       .cookie("accessToken", token, {
         httpOnly: true,
-        path: "/",
-        Secure: true,
       })
       .status(200)
       .json(others);
