@@ -59,6 +59,7 @@ export const rellogin = (req, res) => {
         sameSite: "None",
         secure: true,
         path: "/",
+        partitioned: true,
       })
       .status(200)
       .json(others);
