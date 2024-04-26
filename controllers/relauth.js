@@ -57,9 +57,9 @@ export const rellogin = (req, res) => {
         domain: ".balaifinder-backend-deploy.onrender.com",
         httpOnly: true,
         sameSite: "None",
+        partitioned: true,
         secure: true,
         path: "/",
-        partitioned: true
       })
       .status(200)
       .json(others);
