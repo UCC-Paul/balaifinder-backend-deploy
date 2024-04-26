@@ -54,7 +54,7 @@ export const rellogin = (req, res) => {
 
     res
       .cookie("accessToken", token, {
-        domain: "https://balaifinder.vercel.app",
+        domain: ".example.com",
         httpOnly: true,
         sameSite: "None",
         secure: true,
