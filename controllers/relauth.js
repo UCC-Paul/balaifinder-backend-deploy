@@ -54,7 +54,7 @@ export const rellogin = (req, res) => {
 
     res
       .cookie("accessToken", token, {
-        domain: ".https://balaifinder-backend-deploy.onrender.com",
+        domain: ".onrender.com",
         httpOnly: true,
         sameSite: "None",
         secure: true,
