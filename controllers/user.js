@@ -2,7 +2,7 @@ import { db } from "../connect.js";
 
 export const getUserProfile = (req, res) => {
   // Extract the user ID from local storage
-  const userId = JSON.parse(localStorage.getItem("user"))?.id;
+  const userId = req.params.userId;
 
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized: User ID is missing" });
@@ -26,8 +26,8 @@ export const getUserProfile = (req, res) => {
 };
 
 export const updateUserProfile = (req, res) => {
-  // Extract user ID from local storage
-  const userId = JSON.parse(localStorage.getItem("user"))?.id;
+  // Extract user ID from request params
+  const userId = req.params.userId;
 
   if (!userId) {
     return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
