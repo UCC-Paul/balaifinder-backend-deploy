@@ -455,11 +455,17 @@ app.post("/api/post/:userId/ald", (req, res) => {
 });
 
 // -- GET LIKES --
-app.get('/api/get/likes', (req, res) => {
-  const query = `SELECT property_id FROM userliketable WHERE user_id = 1`;
+app.get('/api/get/:userId/likes', (req, res) => {
+  const userId = req.params.userId;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
+  }
+
+  const query = `SELECT property_id FROM userliketable WHERE user_id = ?`;
 
   // Execute the query to get the list of property IDs liked by the user
-  db.query(query, (error, results) => {
+  db.query(query, [userId], (error, results) => {
       if (error) {
           console.error('Error fetching liked properties:', error);
           res.status(500).json({ error: 'Internal Server Error' });
@@ -490,6 +496,7 @@ app.get('/api/get/likes', (req, res) => {
       });
   });
 });
+
 
 // -- USER APPLPLY FOR HOUSE
 app.post('/api/post/apply', (req, res) => {
