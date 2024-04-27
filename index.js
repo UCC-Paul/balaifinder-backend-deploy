@@ -360,12 +360,6 @@ app.post("/api/post/submitpreferences", (req, res) => {
 // -- PRIORITY SCORING RANGES INPUT
 app.post('/api/post/submitpriority', (req, res) => {
   const rangeValues = req.body;
-  const userId = req.params.userId; // Assuming you have user ID available in req object
-
-  if (!userId) {
-    return res.status(401).json({ message: "Unauthorized: User ID is missing" });
-  }
-
   // Example SQL query to update values in the table
   const sqlUpdatePriority = `
     UPDATE userprioritytable
