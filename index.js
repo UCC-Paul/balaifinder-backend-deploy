@@ -287,6 +287,11 @@ app.get("/api/messages", (req, res) => {
 
 // -- SET USERS PREFERENCES --
 app.post("/api/post/submitpreferences", (req, res) => {
+  const userId = req.params.userId;
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized: User ID is missing" });
+  }
   const { location, house_type, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
   // Check if any of the submitted values are the default placeholder values
   if (
@@ -306,32 +311,60 @@ app.post("/api/post/submitpreferences", (req, res) => {
       return;
   }
 
-  const updatepref = `
-  UPDATE userpreferencestable
-  SET type = ?, location = ?, price = ?, nearelementary = ?, nearhighschool = ?, nearcollege = ?, businessready = ?, isnearchurch = ?, isnearmall = ?, numberofbedroom = ?, numberofbathroom = ?, familysize = ?, typeoflot = ?
-  WHERE id = 1`; // Assuming user_id is 1
-
-  db.query(updatepref, [house_type, location, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot], (err, result) => {
+  const selectPref = `SELECT id FROM userpreferencestable WHERE user_id = ?`;
+  db.query(selectPref, [userId], (err, result) => {
     if (err) {
-        console.error("Error updating preference:", err);
-        res.status(500).send("Error updating preference");
-        return;
+      console.error("Error checking preference:", err);
+      res.status(500).send("Error checking preference");
+      return;
     }
-    if (result.affectedRows === 0) {
-        // If no rows were affected, it means there was no existing preference for the user
-        res.status(404).send("No preference found for the user");
-        return;
+    
+    if (result.length > 0) {
+      // If a preference already exists for the user, update it
+      const updatePref = `
+        UPDATE userpreferencestable
+        SET type = ?, location = ?, price = ?, nearelementary = ?, nearhighschool = ?, nearcollege = ?, businessready = ?, isnearchurch = ?, isnearmall = ?, numberofbedroom = ?, numberofbathroom = ?, familysize = ?, typeoflot = ?
+        WHERE user_id = ?`;
+
+      db.query(updatePref, [house_type, location, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot, userId], (err, updateResult) => {
+        if (err) {
+          console.error("Error updating preference:", err);
+          res.status(500).send("Error updating preference");
+          return;
+        }
+        console.log('Your preferences are all set check if you got a match');
+        // Sending success response
+        res.send('Your preferences are all set check if you got a match');
+      });
+    } else {
+      // If no preference exists for the user, insert a new row
+      const insertPref = `
+        INSERT INTO userpreferencestable (user_id, type, location, price, nearelementary, nearhighschool, nearcollege, businessready, isnearchurch, isnearmall, numberofbedroom, numberofbathroom, familysize, typeoflot)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+      db.query(insertPref, [userId, house_type, location, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot], (err, insertResult) => {
+        if (err) {
+          console.error("Error inserting preference:", err);
+          res.status(500).send("Error inserting preference");
+          return;
+        }
+        console.log('New preferences added');
+        // Sending success response
+        res.send('Your preferences are all set check if you got a match');
+      });
     }
-    console.log('Your preferences are all set check if you got a match');
-    // Sending success response
-    res.send('Your preferences are all set check if you got a match');
+  });
 });
-});
+
 
 // -- PRIORITY SCORING RANGES INPUT
 app.post('/api/post/submitpriority', (req, res) => {
   const rangeValues = req.body;
-  const userId = req.userId; // Assuming you have user ID available in req object
+  const userId = req.params.userId; // Assuming you have user ID available in req object
+
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized: User ID is missing" });
+  }
 
   // Example SQL query to update values in the table
   const sqlUpdatePriority = `
@@ -368,6 +401,8 @@ app.post('/api/post/submitpriority', (req, res) => {
     res.status(200).json({ message: 'Preferences updated successfully' });
   });
 });
+
+
 //ALD TRIPLE BABY
 // Endpoint for inserting Property data based on action
 app.post("/api/post/ald", (req, res) => {
