@@ -360,6 +360,7 @@ app.post("/api/post/submitpreferences", (req, res) => {
 // -- PRIORITY SCORING RANGES INPUT
 app.post('/api/post/submitpriority', (req, res) => {
   const rangeValues = req.body;
+  const userId = req.userId; // Assuming you have user ID available in req object
   // Example SQL query to update values in the table
   const sqlUpdatePriority = `
     UPDATE userprioritytable
