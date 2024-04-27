@@ -29,12 +29,12 @@ app.use(cookieParser());
 app.use(express.json());
 
 // Additional CORS headers
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  next();
-});
+//app.use((req, res, next) => {
+  //res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  //res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  //res.setHeader("Access-Control-Allow-Credentials", "true");
+  //next();
+//});
 
 app.use((req, res, next) => {
   // Add headers to allow cross-origin requests
