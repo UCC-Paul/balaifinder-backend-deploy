@@ -59,7 +59,12 @@ export const login = (req, res) => {
 
     res
       .cookie("accessToken", token, {
-      httpOnly: true,
+        domain: ".balaifinder-backend-deploy.onrender.com",
+        partitioned: true,
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+        path: "/",
       })
       .status(200)
       .json(others);
