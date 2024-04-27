@@ -286,7 +286,7 @@ app.get("/api/messages", (req, res) => {
 });
 
 // -- SET USERS PREFERENCES --
-app.post("/api/post/submitpreferences", (req, res) => {
+app.post("/api/post/:userId/submitpreferences", (req, res) => {
   const userId = req.params.userId;
 
   if (!userId) {
