@@ -400,14 +400,14 @@ app.post('/api/post/submitpriority', (req, res) => {
 
 //ALD TRIPLE BABY
 // Endpoint for inserting Property data based on action
-app.post("/api/post/ald", (req, res) => {
+app.post("/api/post/:userId/ald", (req, res) => {
   const { productId, action } = req.body;
 
-  // Extract user_id from JWT token
-  //const token = req.cookies.accessToken;
-  //const decodedToken = jwt.verify(token, "secretkey");
-  //const userId = decodedToken.id;
-  const userId = 1;
+  const userId = req.params.userId;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
+  }
 
   let tableName = '';
 
