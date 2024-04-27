@@ -45,7 +45,7 @@ export const updateUserProfile = (req, res) => {
   
     try {
       // Verify the accessToken using the secret key
-      const decoded = jwt.verify(accessToken, 'secretkey');
+      const decoded = jwt.verify(accessToken, "secretkey");
   
       const userId = decoded.id;
   
