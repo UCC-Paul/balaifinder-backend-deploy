@@ -7,6 +7,6 @@ const router = express.Router();
 router.get("/:userId/profile", getUserProfile);
 
 // Route for updating user profile
-router.put('/:userId/profile', updateUserProfile);
+router.put('/:userId/updprofile', updateUserProfile);
 
 export default router;
