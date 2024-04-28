@@ -43,12 +43,11 @@ export const updateUserProfile = (req, res) => {
     region,
     province,
     municipality,
-    pin,
   } = req.body;
 
   // Update user profile in the database
   const q =
-    "UPDATE users SET first_name = ?, last_name = ?, email = ?, bday = ?, gender = ?, address = ?, region = ?, province = ?, municipality = ?, pin = ? WHERE id = ?";
+    "UPDATE users SET first_name = ?, last_name = ?, email = ?, bday = ?, gender = ?, address = ?, region = ?, province = ?, municipality = ? WHERE id = ?";
 
   const values = [
     first_name,
@@ -60,7 +59,6 @@ export const updateUserProfile = (req, res) => {
     region,
     province,
     municipality,
-    pin,
     userId,
   ];
 
