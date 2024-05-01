@@ -6,6 +6,7 @@ import relauthRoutes from "./routes/relauth.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { db } from "./connect.js";
+import path from 'path'
 import jwt from "jsonwebtoken";
 import { showAlgorithmResult } from "./controllers/algorithm.js";
 import multer from 'multer';
