@@ -96,6 +96,12 @@ export const login = (req, res) => {
     if (err) return res.status(500).json(err);
     if (data.length === 0) return res.status(404).json("User not found!");
 
+    const user = data[0];
+
+    if (!user.verified) {
+      return res.status(403).json("Email not verified. Please verify your email before logging in.");
+    }
+
     const checkPassword = bcrypt.compareSync(
       req.body.password,
       data[0].password
