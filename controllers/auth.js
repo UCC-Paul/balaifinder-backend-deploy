@@ -16,9 +16,12 @@ const sendVerificationEmail = (email, verificationToken) => {
   const transporter = nodemailer.createTransport({
     // Your email configuration here (e.g., Gmail, SMTP, etc.)
     service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD
+    pass: process.env.EMAIL_APP_PASSWORD
   }
   });
 
@@ -27,7 +30,7 @@ const sendVerificationEmail = (email, verificationToken) => {
     from: process.env.EMAIL_USER,
     to: email,
     subject: 'Email Verification',
-    html: `<p>Click <a href="https://balaifinder-backend-deploy.onrender.com/verify/${verificationToken}">here</a> to verify your email address.</p>`
+    html: `<p>Click <a href="https://balaifinder.vercel.app/verify/${verificationToken}">here</a> to verify your email address.</p>`
   };
 
   // Send email
