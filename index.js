@@ -12,6 +12,13 @@ import multer from 'multer';
 
 const app = express();
 
+//Backend Design
+app.get('', (req, res) => {
+  // Send the HTML file as the response
+  res.sendFile(path.join(process.cwd(), 'index.html'));
+});
+
+
 /// Middleware
 app.use(cors({
   origin: ["https://balaifinder.vercel.app"],
