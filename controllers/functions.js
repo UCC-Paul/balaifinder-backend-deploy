@@ -75,72 +75,44 @@ export const getpropertybyid = (req, res) => {
 };
 
 export const submitpreferences = (req, res) => {
-    const userId = req.params.userId;
-
-  if (!userId) {
-    return res.status(401).json({ message: "Unauthorized: User ID is missing" });
-  }
-  const { location, house_type, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
-  // Check if any of the submitted values are the default placeholder values
-  if (
-    location === "Please Select" ||
-    house_type === "Please Select" ||
-    price === "Please Select" ||
-    near_elementary === "Please Select" ||
-    near_highschool === "Please Select" ||
-    near_college === "Please Select" ||
-    near_church === "Please Select" ||
-    businessready === "Please Select" ||
-    near_mall === "Please Select" ||
-    bedroom === "Please Select" ||
-    bathroom === "Please Select" 
-  ) {
-      res.status(400).send("Please select valid preferences");
-      return;
-  }
-
-  const selectPref = `SELECT id FROM userpreferencestable WHERE user_id = ?`;
-  db.query(selectPref, [userId], (err, result) => {
-    if (err) {
-      console.error("Error checking preference:", err);
-      res.status(500).send("Error checking preference");
-      return;
+    const { location, house_type, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
+    // Check if any of the submitted values are the default placeholder values
+    if (
+      location === "Please Select" ||
+      house_type === "Please Select" ||
+      price === "Please Select" ||
+      near_elementary === "Please Select" ||
+      near_highschool === "Please Select" ||
+      near_college === "Please Select" ||
+      near_church === "Please Select" ||
+      businessready === "Please Select" ||
+      near_mall === "Please Select" ||
+      bedroom === "Please Select" ||
+      bathroom === "Please Select" 
+    ) {
+        res.status(400).send("Please select valid preferences");
+        return;
     }
-    
-    if (result.length > 0) {
-      // If a preference already exists for the user, update it
-      const updatePref = `
-        UPDATE userpreferencestable
-        SET type = ?, location = ?, price = ?, nearelementary = ?, nearhighschool = ?, nearcollege = ?, businessready = ?, isnearchurch = ?, isnearmall = ?, numberofbedroom = ?, numberofbathroom = ?, familysize = ?, typeoflot = ?
-        WHERE user_id = ?`;
-
-      db.query(updatePref, [house_type, location, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot, userId], (err, updateResult) => {
-        if (err) {
+  
+    const updatepref = `
+    UPDATE userpreferencestable
+    SET type = ?, location = ?, price = ?, nearelementary = ?, nearhighschool = ?, nearcollege = ?, businessready = ?, isnearchurch = ?, isnearmall = ?, numberofbedroom = ?, numberofbathroom = ?, familysize = ?, typeoflot = ?
+    WHERE id = 1`; // Assuming user_id is 1
+  
+    db.query(updatepref, [house_type, location, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot], (err, result) => {
+      if (err) {
           console.error("Error updating preference:", err);
           res.status(500).send("Error updating preference");
           return;
-        }
-        console.log('Your preferences are all set check if you got a match');
-        // Sending success response
-        res.send('Your preferences are all set check if you got a match');
-      });
-    } else {
-      // If no preference exists for the user, insert a new row
-      const insertPref = `
-        INSERT INTO userpreferencestable (user_id, type, location, price, nearelementary, nearhighschool, nearcollege, businessready, isnearchurch, isnearmall, numberofbedroom, numberofbathroom, familysize, typeoflot)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-      db.query(insertPref, [userId, house_type, location, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot], (err, insertResult) => {
-        if (err) {
-          console.error("Error inserting preference:", err);
-          res.status(500).send("Error inserting preference");
+      }
+      if (result.affectedRows === 0) {
+          // If no rows were affected, it means there was no existing preference for the user
+          res.status(404).send("No preference found for the user");
           return;
-        }
-        console.log('New preferences added');
-        // Sending success response
-        res.send('Your preferences are all set check if you got a match');
-      });
-    }
+      }
+      console.log('Your preferences are all set check if you got a match');
+      // Sending success response
+      res.send('Your preferences are all set check if you got a match');
   });
 };
 
