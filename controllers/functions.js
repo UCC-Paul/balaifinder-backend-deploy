@@ -245,7 +245,7 @@ export const apply = (req, res) => {
 export const updateStatus = (req, res) => {
   const { id } = req.params;
   const { status, comments } = req.body;
-  const sqlUpdateStatus = "UPDATE userapplicationtable SET status = ?, realtor_comments = ? WHERE id = ?";
+  const sqlUpdateStatus = "UPDATE userapplicationtable SET status = ?, comments = ? WHERE id = ?";
   db.query(sqlUpdateStatus, [status, comments, id], (err, result) => {
       if (err) {
           console.error('Error updating status and comments:', err);
