@@ -1,21 +1,11 @@
 import { db } from "../connect.js";
 
-export const getproperties = (req, res) => {
-  const q = "SELECT * FROM propertiestable";
-
-  db.query(q, (err, data) => {
-    if (err) {
-      console.log(err);
-      return res.json(err);
-    }
-    return res.json(data);
-  });
-};
-
 export const addproperties = (req, res) => {
-  const q =
-    "INSERT INTO propertiestable (`name`,`location`, `type`, `price`, `monthly`, `nearelementary`, `nearhighschool`, `nearcollege`, `isnearschool`,`isnearmall`, `isnearchurch`, `numberofbedroom`, `numberofbathroom`, `typeoflot`, `familysize`, `businessready`, `description`, `imgsrc`) VALUES (?)";
-
+  console.log("Received property data:", req.body); // Log received property data
+  
+  const sqlAddproperty =
+    "INSERT INTO propertiestable (`name`, `location`, `type`, `price`, `monthly`, `nearelementary`, `nearhighschool`, `nearcollege`, `isnearmall`, `isnearchurch`, `numberofbedroom`, `numberofbathroom`, `typeoflot`, `familysize`, `businessready`, `description`, `imgsrc`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  
   const values = [
     req.body.name,
     req.body.location,
@@ -25,62 +15,107 @@ export const addproperties = (req, res) => {
     req.body.nearelementary,
     req.body.nearhighschool,
     req.body.nearcollege,
-    req.body.isnearschool,
-    req.body.isnearmall,
-    req.body.isnearchurch,
-    req.body.numberofbedroom,
-    req.body.numberofbathroom,
+    req.body.nearmall,
+    req.body.nearchurch,
+    req.body.numBedrooms,
+    req.body.numBathrooms,
     req.body.typeoflot,
     req.body.familysize,
-    req.body.plantodobusiness,
+    req.body.businessready,
     req.body.description,
     req.body.imgsrc,
   ];
-
-  db.query(q, values, (err, data) => {
-    if (err) return res.send(err);
+  
+  db.query(sqlAddproperty, values, (err, data) => {
+    if (err) {
+      console.error("Error adding property:", err);
+      return res.send(err);
+    }
+    console.log("Property added successfully:", data);
     return res.json(data);
   });
 };
 
-export const updproperties = (req, res) => {
-  const propertyId = req.params.id;
-  const q =
-    "UPDATE propertiestable SET `name`= ?, `type`= ?, `location`= ?, `price`= ?, `isnearschool`= ?, `isnearchurch`= ?, `isnearmall`= ?, `numberofbedroom`= ?, `numberofbathroom`= ?, `typeoflot`= ?, `familysize`= ?, `nearelementary`= ?, `nearhighschool`= ?, `nearcollege`= ?, `plantodobusiness`= ?, `monthly`= ?, `description`= ?, `imgsrc`= ? WHERE id = ?";
+export const updateproperties = (req, res) => {
+    const propId = req.params.id;
+    const updatedProperty = req.body;
 
-  const values = [
-    req.body.name,
-    req.body.type,
-    req.body.location,
-    req.body.price,
-    req.body.isnearschool,
-    req.body.isnearchurch,
-    req.body.isnearmall,
-    req.body.numberofbedroom,
-    req.body.numberofbathroom,
-    req.body.typeoflot,
-    req.body.familysize,
-    req.body.nearelementary,
-    req.body.nearhighschool,
-    req.body.nearcollege,
-    req.body.plantodobusiness,
-    req.body.monthly,
-    req.body.description,
-    req.body.imgsrc,
-  ];
+    const sqlUpdateProperty = `
+        UPDATE propertiestable
+        SET
+        name = ?,
+        location = ?,
+        type = ?,
+        price = ?,
+        monthly = ?,
+        nearelementary = ?,
+        nearhighschool = ?,
+        nearcollege = ?,
+        isnearmall = ?,
+        isnearchurch = ?,
+        numberofbedroom = ?,
+        numberofbathroom = ?,
+        typeoflot = ?,
+        familysize = ?,
+        businessready = ?,
+        description = ?,
+        imgsrc = ?
+        WHERE id = ?
+    `;
 
-  db.query(q, [...values, propertyId], (err, data) => {
-    if (err) return res.send(err);
-    return res.json(data);
-  });
+    const values = [
+        updatedProperty.name,
+        updatedProperty.location,
+        updatedProperty.type,
+        updatedProperty.price,
+        updatedProperty.monthly,
+        updatedProperty.nearelementary,
+        updatedProperty.nearhighschool,
+        updatedProperty.nearcollege,
+        updatedProperty.nearmall,
+        updatedProperty.nearchurch,
+        updatedProperty.numBedrooms,
+        updatedProperty.numBathrooms,
+        updatedProperty.typeoflot,
+        updatedProperty.familysize,
+        updatedProperty.businessready,
+        updatedProperty.description,
+        updatedProperty.imgsrc,
+        propId,
+    ];
+
+    db.query(sqlUpdateProperty, values, (err, result) => {
+        if (err) {
+        console.error("Error updating property:", err);
+        return res.status(500).json({ error: "Internal server error" });
+        }
+        if (result.affectedRows === 0) {
+        return res.status(404).json({ error: "Property not found" });
+        }
+        console.log("Property updated successfully");
+        res.json({ message: "Property updated successfully" });
+    });
 };
 
-export const delproperties = (req, res) => {
-  const propertyId = req.params.id;
-  const q = " DELETE FROM propertiestable WHERE id = ? ";
+export const deleteproperties = (req, res) => {
+    const propId = req.params.id;
 
-  db.query(q, [propertyId], (err, data) => {
-    if (err) return res.send(err);
-    return res.json(data);
+  // SQL query to delete the property with the given ID
+  const sqlDeleteProperty = "DELETE FROM propertiestable WHERE id = ?";
+
+  // Execute the SQL query
+  db.query(sqlDeleteProperty, [propId], (err, result) => {
+    if (err) {
+      console.error("Error deleting property:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    // Check if any rows were affected
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Property not found" });
+    }
+
+    // Send success response
+    res.json({ message: "Property deleted successfully" });
   });
 };
