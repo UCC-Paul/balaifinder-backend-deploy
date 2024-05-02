@@ -241,3 +241,19 @@ export const apply = (req, res) => {
     });
   });
 }
+
+export const updateStatus = (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  // Update the status of the application with the provided ID
+  const sqlUpdateStatus = "UPDATE userapplicationtable SET status = ? WHERE id = ?";
+  db.query(sqlUpdateStatus, [status, id], (err, result) => {
+      if (err) {
+          console.error('Error updating status:', err);
+          return res.status(500).json({ error: 'Internal server error' });
+      }
+      console.log('Status updated successfully');
+      res.json({ message: 'Status updated successfully' });
+  });
+};

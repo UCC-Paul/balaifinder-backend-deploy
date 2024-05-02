@@ -8,7 +8,7 @@ import { db } from "./connect.js";
 import path from 'path'
 import { showAlgorithmResult } from "./controllers/algorithm.js";
 import { addproperties, deleteproperties, updateproperties } from "./controllers/crud.js";
-import { ald, apply, getapplications, getlikes, getlocation, getprice, getproperty, getpropertybyid, gettype, submitpreferences } from "./controllers/functions.js";
+import { ald, apply, getapplications, getlikes, getlocation, getprice, getproperty, getpropertybyid, gettype, submitpreferences, updateStatus } from "./controllers/functions.js";
 
 
 const app = express();
@@ -62,10 +62,10 @@ app.get("/api/get/applications", getapplications);
 app.get("/api/get/properties/:id", getpropertybyid);
 app.get("/api/get/properties", getproperty);
 app.post("/api/post/:userId/submitpreferences", submitpreferences);
-app.post("/api/post/:userId/ald", ald)
-app.get('/api/get/:userId/likes', getlikes)
-app.post('/api/post/apply', apply)
-
+app.post("/api/post/:userId/ald", ald);
+app.get('/api/get/:userId/likes', getlikes);
+app.post('/api/post/apply', apply);
+app.put('/api/update/application/:id/status', updateStatus);
 
 
 app.options("/api/auth/login", (req, res) => {
