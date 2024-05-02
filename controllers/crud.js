@@ -37,65 +37,38 @@ export const addproperties = (req, res) => {
 };
 
 export const updateproperties = (req, res) => {
-    const propId = req.params.id;
-    const updatedProperty = req.body;
+  const propId = req.params.id;
+  const updatedProperty = req.body;
 
-    const sqlUpdateProperty = `
-        UPDATE propertiestable
-        SET
-        name = ?,
-        location = ?,
-        type = ?,
-        price = ?,
-        monthly = ?,
-        nearelementary = ?,
-        nearhighschool = ?,
-        nearcollege = ?,
-        isnearmall = ?,
-        isnearchurch = ?,
-        numberofbedroom = ?,
-        numberofbathroom = ?,
-        typeoflot = ?,
-        familysize = ?,
-        businessready = ?,
-        description = ?,
-        imgsrc = ?
-        WHERE id = ?
-    `;
+  let sqlUpdateProperty = 'UPDATE propertiestable SET';
+  const values = [];
 
-    const values = [
-        updatedProperty.name,
-        updatedProperty.location,
-        updatedProperty.type,
-        updatedProperty.price,
-        updatedProperty.monthly,
-        updatedProperty.nearelementary,
-        updatedProperty.nearhighschool,
-        updatedProperty.nearcollege,
-        updatedProperty.nearmall,
-        updatedProperty.nearchurch,
-        updatedProperty.numBedrooms,
-        updatedProperty.numBathrooms,
-        updatedProperty.typeoflot,
-        updatedProperty.familysize,
-        updatedProperty.businessready,
-        updatedProperty.description,
-        updatedProperty.imgsrc,
-        propId,
-    ];
+  Object.keys(updatedProperty).forEach((key, index) => {
+      if (key !== 'id') {
+          sqlUpdateProperty += ` ${key} = ?,`;
+          values.push(updatedProperty[key]);
+      }
+  });
 
-    db.query(sqlUpdateProperty, values, (err, result) => {
-        if (err) {
-        console.error("Error updating property:", err);
-        return res.status(500).json({ error: "Internal server error" });
-        }
-        if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "Property not found" });
-        }
-        console.log("Property updated successfully");
-        res.json({ message: "Property updated successfully" });
-    });
+  // Remove the trailing comma from the SQL query
+  sqlUpdateProperty = sqlUpdateProperty.slice(0, -1);
+
+  sqlUpdateProperty += ' WHERE id = ?';
+  values.push(propId);
+
+  db.query(sqlUpdateProperty, values, (err, result) => {
+      if (err) {
+          console.error("Error updating property:", err);
+          return res.status(500).json({ error: "Internal server error" });
+      }
+      if (result.affectedRows === 0) {
+          return res.status(404).json({ error: "Property not found" });
+      }
+      console.log("Property updated successfully");
+      res.json({ message: "Property updated successfully" });
+  });
 };
+
 
 export const deleteproperties = (req, res) => {
     const propId = req.params.id;
