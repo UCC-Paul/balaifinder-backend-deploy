@@ -255,3 +255,21 @@ export const updateStatus = (req, res) => {
       res.json({ message: 'Status and comments updated successfully' });
   });
 };
+
+export const getStatusAndComments = (req, res) => {
+  const { id } = req.params;
+  const sqlGetStatusAndComments = "SELECT status, comments FROM userapplicationtable WHERE id = ?";
+  db.query(sqlGetStatusAndComments, [id], (err, result) => {
+      if (err) {
+          console.error('Error fetching status and comments:', err);
+          return res.status(500).json({ error: 'Internal server error' });
+      }
+      // Check if any data was found for the given ID
+      if (result.length === 0) {
+          return res.status(404).json({ error: 'Application not found' });
+      }
+      // Return the status and comments
+      const { status, comments } = result[0];
+      res.json({ status, comments });
+  });
+};
