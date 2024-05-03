@@ -281,7 +281,17 @@ if (!userId) {
   return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
 }
 
-const query = `SELECT property_id FROM userapplicationtable WHERE user_id = ?`;
+const query = `
+SELECT 
+    userapplicationtable.*, 
+    properties.*
+FROM 
+    userapplicationtable 
+JOIN 
+    propertiestable AS properties ON userapplicationtable.property_id = properties.id 
+WHERE 
+    userapplicationtable.user_id = ?`;
+
 
 // Execute the query to get the list of property IDs liked by the user
 db.query(query, [userId], (error, results) => {
