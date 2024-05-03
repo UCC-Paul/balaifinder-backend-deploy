@@ -277,42 +277,41 @@ export const getStatusAndComments = (req, res) => {
 export const getuserapplicationbyid = (req, res) => {
   const userId = req.params.userId;
 
-  if (!userId) {
-    return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
-  }
+if (!userId) {
+  return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
+}
 
-  const userApplicationQuery = `
-    SELECT * FROM userapplicationtable 
-    WHERE user_id = ?`;
+const query = `SELECT property_id FROM userapplicationtable WHERE user_id = ?`;
 
-  // Execute the query to get user application data
-  db.query(userApplicationQuery, [userId], (error, userApplicationResults) => {
+// Execute the query to get the list of property IDs liked by the user
+db.query(query, [userId], (error, results) => {
     if (error) {
-      console.error('Error fetching user application data:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-      return;
-    }
-
-    const propertyIds = userApplicationResults.map(result => result.property_id);
-
-    if (propertyIds.length === 0) {
-      // If there are no property IDs, return an empty array
-      res.json([]);
-      return;
-    }
-
-    const propertiesQuery = `SELECT * FROM propertiestable WHERE id IN (${propertyIds.join(',')})`;
-
-    // Execute the query to get property data based on property IDs
-    db.query(propertiesQuery, (error, propertiesResults) => {
-      if (error) {
-        console.error('Error fetching properties data:', error);
+        console.error('Error fetching liked properties:', error);
         res.status(500).json({ error: 'Internal Server Error' });
         return;
-      }
+    }
 
-      // Send the fetched data as JSON response
-      res.json({ userApplicationData: userApplicationResults, propertiesData: propertiesResults });
+    // Extract the property IDs from the query results
+    const propertyIds = results.map(result => result.property_id);
+
+    // If there are no property IDs, return an empty array
+    if (propertyIds.length === 0) {
+        res.json([]);
+        return;
+    }
+
+    // Query to fetch properties data based on the property IDs
+    const propertiesQuery = `SELECT * FROM propertiestable WHERE id IN (${propertyIds.join(',')})`;
+
+    // Execute the query to fetch properties data
+    db.query(propertiesQuery, (error, properties) => {
+        if (error) {
+            console.error('Error fetching properties:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+        // Send the fetched properties data as JSON response
+        res.json(properties);
     });
-  });
-};
+});
+}
