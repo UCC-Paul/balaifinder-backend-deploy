@@ -8,7 +8,7 @@ import { db } from "./connect.js";
 import path from 'path'
 import { showAlgorithmResult } from "./controllers/algorithm.js";
 import { addproperties, deleteproperties, updateproperties } from "./controllers/crud.js";
-import { ald, apply, getStatusAndComments, getapplications, getlikes, getlocation, getprice, getproperty, getpropertybyid, gettype, submitpreferences, updateStatus } from "./controllers/functions.js";
+import { ald, apply, getStatusAndComments, getapplications, getuserapplicationbyid, getlikes, getlocation, getprice, getproperty, getpropertybyid, gettype, submitpreferences, updateStatus } from "./controllers/functions.js";
 
 
 const app = express();
