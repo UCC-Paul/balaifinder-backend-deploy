@@ -67,6 +67,7 @@ app.get('/api/get/:userId/likes', getlikes);
 app.post('/api/post/apply', apply);
 app.put('/api/update/application/:id/status', updateStatus);
 app.get('/api/get/application/:id/status', getStatusAndComments)
+app.get('/api/get/:userId/user/application', getuserapplicationbyid);
 
 
 app.options("/api/auth/login", (req, res) => {
