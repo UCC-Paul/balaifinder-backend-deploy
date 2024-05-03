@@ -22,7 +22,7 @@ app.get('', (req, res) => {
 
 /// Middleware
 app.use(cors({
-  origin: ["https://balaifinder.vercel.app"],
+  origin: ["https://balaifinder.vercel.app", "https://balaifinder-frontend-production.vercel.app"],
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
 
