@@ -210,7 +210,7 @@ export const getlikes = (req, res) => {
 
 export const apply = (req, res) => {
   const { propertyId, firstName, lastName, email } = req.body;
-  const userId = 1;
+  const userId = req.params.userId;
 
   // Check if the combination of user_id and property_id already exists
   const sqlCheckExistence = `SELECT * FROM userapplicationtable WHERE user_id = ? AND property_id = ?`;
@@ -251,6 +251,7 @@ export const apply = (req, res) => {
           console.error('Error saving certificate:', err);
           return res.status(500).json({ error: 'Internal Server Error' });
         }
+        const userId = req.params.userId;
 
         // Once the files are saved, insert the data into the database
         const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, first_name, last_name, email, companyid, certificate, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
