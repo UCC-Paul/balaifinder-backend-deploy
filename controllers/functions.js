@@ -282,8 +282,8 @@ export const updateStatus = (req, res) => {
 };
 
 export const getStatusAndComments = (req, res) => {
-  const { userId} = req.params;
-  const sqlGetStatusAndComments = "SELECT status FROM userapplicationtable WHERE id = ?";
+  const { userId } = req.params;
+  const sqlGetStatusAndComments = "SELECT status FROM userapplicationtable WHERE user_id = ?";
   db.query(sqlGetStatusAndComments, [userId], (err, result) => {
       if (err) {
           console.error('Error fetching status and comments:', err);
