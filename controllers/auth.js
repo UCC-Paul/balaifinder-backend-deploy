@@ -30,7 +30,7 @@ const sendVerificationEmail = (email, verificationToken) => {
     from: process.env.EMAIL_USER,
     to: email,
     subject: 'Email Verification',
-    html: `<p>Click <a href="https://balaifinder.vercel.app/verify/${verificationToken}">here</a> to verify your email address.</p>`
+    html: `<p>Click <a href="https://matchwithbalaifinder.vercel.app/verify/${verificationToken}">here</a> to verify your email address.</p>`
   };
 
   // Send email
