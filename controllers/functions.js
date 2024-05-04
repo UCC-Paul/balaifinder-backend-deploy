@@ -224,45 +224,36 @@ const upload = multer({ storage: storage }).fields([
 ]);
 
 export const apply = (req, res) => {
-  upload(req, res, (err) => {
+  const { propertyId, firstName, lastName, email, fileUrl, companyIdUrl } = req.body; // Include 'companyIdUrl' in the destructuring
+  const userId = 1; // Assuming user_id is 1
+
+  // Check if the combination of user_id and property_id already exists
+  const sqlCheckExistence = `SELECT * FROM userapplicationtable WHERE user_id = ? AND property_id = ?`;
+
+  db.query(sqlCheckExistence, [userId, propertyId], (err, result) => {
     if (err) {
-      console.error('Error uploading files:', err);
+      console.error('Error checking existence in userapplicationtable:', err);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
 
-    const { propertyId, firstName, lastName, email, userId } = req.body;
-    
-    // Check if the combination of user_id and property_id already exists
-    const sqlCheckExistence = `SELECT * FROM userapplicationtable WHERE user_id = ? AND property_id = ?`;
+    // If the result contains any rows, it means the combination already exists
+    if (result.length > 0) {
+      console.log('You already applied');
+      return res.status(400).json({ message: 'You already applied' });
+    }
 
-    db.query(sqlCheckExistence, [userId, propertyId], (err, result) => {
+    // If the combination doesn't exist, insert new data
+    const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, first_name, last_name, email, certificate, companyid, status) VALUES (?, ?, ?, ?, ?, ?, ?, "PENDING")`; // Include 'companyid' in the query
+    const values = [userId, propertyId, firstName, lastName, email, fileUrl, companyIdUrl]; // Include 'companyIdUrl' in the values
+
+    // Execute the query to insert new data
+    db.query(sqlInsertApplication, values, (err, result) => {
       if (err) {
-        console.error('Error checking existence in userapplicationtable:', err);
+        console.error('Error inserting data into userapplicationtable:', err);
         return res.status(500).json({ error: 'Internal Server Error' });
       }
-
-      // If the result contains any rows, it means the combination already exists
-      if (result.length > 0) {
-        console.log('You already applied');
-        return res.status(400).json({ message: 'You already applied' });
-      }
-
-      // If the combination doesn't exist, insert new data
-      const companyidPath = req.files.companyid[0].path;
-      const certificatePath = req.files.certificate[0].path;
-
-      const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, first_name, last_name, email, companyid, certificate, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-      const values = [userId, propertyId, firstName, lastName, email, companyidPath, certificatePath, 'PENDING'];
-
-      // Execute the query to insert new data
-      db.query(sqlInsertApplication, values, (err, result) => {
-        if (err) {
-          console.error('Error inserting data into userapplicationtable:', err);
-          return res.status(500).json({ error: 'Internal Server Error' });
-        }
-        console.log('Data inserted into userapplicationtable:', result);
-        res.status(200).json({ message: 'Data inserted successfully' });
-      });
+      console.log('Data inserted into userapplicationtable:', result);
+      res.status(200).json({ message: 'Data inserted successfully' });
     });
   });
 };
