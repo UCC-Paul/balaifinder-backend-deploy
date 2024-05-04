@@ -345,7 +345,6 @@ export const getStatus = (req, res) => {
           return res.status(404).json({ error: 'Application not found' });
       }
       // Return the status
-      const { status } = result[0];
       const { status, comments } = result[0];
       res.json({ status, comments });
   });
