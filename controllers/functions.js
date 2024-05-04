@@ -225,7 +225,7 @@ const upload = multer({ storage: storage }).fields([
 
 export const apply = (req, res) => {
   const { propertyId, firstName, lastName, email, fileUrl, companyIdUrl } = req.body; // Include 'companyIdUrl' in the destructuring
-  const userId = 1; // Assuming user_id is 1
+  const userId = req.params.userId; // Assuming user_id is 1
 
   // Check if the combination of user_id and property_id already exists
   const sqlCheckExistence = `SELECT * FROM userapplicationtable WHERE user_id = ? AND property_id = ?`;
