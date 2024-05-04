@@ -340,3 +340,21 @@ db.query(query, [userId], (error, results) => {
     });
 });
 }
+
+export const getStatus = (req, res) => {
+  const { userId } = req.params;
+  const sqlGetStatus = "SELECT status FROM userapplicationtable WHERE user_id = ?";
+  db.query(sqlGetStatus, [userId], (err, result) => {
+      if (err) {
+          console.error('Error fetching status:', err);
+          return res.status(500).json({ error: 'Internal server error' });
+      }
+      // Check if any data was found for the given ID
+      if (result.length === 0) {
+          return res.status(404).json({ error: 'Application not found' });
+      }
+      // Return the status
+      const { status } = result[0];
+      res.json({ status });
+  });
+};
