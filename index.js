@@ -72,7 +72,7 @@ app.get("/api/get/properties", getproperty);
 app.post("/api/post/:userId/submitpreferences", submitpreferences);
 app.post("/api/post/:userId/ald", ald);
 app.get('/api/get/:userId/likes', getlikes);
-app.post('/api/post/apply:userId', apply);
+app.post('/api/post/apply/:userId', apply);
 app.put('/api/update/application/:id/status', updateStatus);
 app.get('/api/get/application/:id/status', getStatusAndComments)
 app.get('/api/get/:userId/user/application', getuserapplicationbyid);
