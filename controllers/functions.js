@@ -210,11 +210,7 @@ export const getlikes = (req, res) => {
 
 export const apply = (req, res) => {
   const { propertyId, firstName, lastName, email } = req.body;
-  const userId = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).id : null;
-
-  if (!userId) {
-    return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
-  }
+  const userId = 1;
 
   // Check if the combination of user_id and property_id already exists
   const sqlCheckExistence = `SELECT * FROM userapplicationtable WHERE user_id = ? AND property_id = ?`;
