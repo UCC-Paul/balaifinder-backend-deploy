@@ -76,7 +76,7 @@ app.post('/api/post/apply', apply);
 app.put('/api/update/application/:id/status', updateStatus);
 app.get('/api/get/application/:id/status', getStatusAndComments)
 app.get('/api/get/:userId/user/application', getuserapplicationbyid);
-app.get('/api/get/:userId/application/status', getStatus);
+app.get('/api/get/:userId/user/status', getStatus);
 
 
 app.options("/api/auth/login", (req, res) => {
