@@ -231,7 +231,7 @@ export const apply = (req, res) => {
     }
 
     const { propertyId, firstName, lastName, email } = req.body;
-    const userId = 1;
+    const userId = req.params.userId;
 
     // Check if the combination of user_id and property_id already exists
     const sqlCheckExistence = `SELECT * FROM userapplicationtable WHERE user_id = ? AND property_id = ?`;
