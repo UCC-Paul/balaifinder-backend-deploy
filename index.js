@@ -3,6 +3,7 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import relauthRoutes from "./routes/relauth.js";
 import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
 import cors from "cors";
 import { db } from "./connect.js";
 import path from 'path'
@@ -29,6 +30,7 @@ app.use(cors({
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(fileUpload());
 
 
 app.use((req, res, next) => {
