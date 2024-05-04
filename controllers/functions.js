@@ -334,7 +334,7 @@ db.query(query, [userId], (error, results) => {
 
 export const getStatus = (req, res) => {
   const userId = req.params.userId;
-  const sqlGetStatus = "SELECT status FROM userapplicationtable WHERE user_id = ?";
+  const sqlGetStatus = "SELECT status, comments FROM userapplicationtable WHERE id = ?";
   db.query(sqlGetStatus, [userId], (err, result) => {
       if (err) {
           console.error('Error fetching status:', err);
@@ -346,6 +346,7 @@ export const getStatus = (req, res) => {
       }
       // Return the status
       const { status } = result[0];
-      res.json({ status });
+      const { status, comments } = result[0];
+      res.json({ status, comments });
   });
 };
