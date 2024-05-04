@@ -342,7 +342,7 @@ db.query(query, [userId], (error, results) => {
 }
 
 export const getStatus = (req, res) => {
-  const userId = req.params;
+  const userId = req.params.userId;
   const sqlGetStatus = "SELECT status FROM userapplicationtable WHERE user_id = ?";
   db.query(sqlGetStatus, [userId], (err, result) => {
       if (err) {
