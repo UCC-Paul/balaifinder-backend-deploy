@@ -230,9 +230,8 @@ export const apply = (req, res) => {
       return res.status(500).json({ error: 'Internal Server Error' });
     }
 
-    const { propertyId, firstName, lastName, email } = req.body;
-    const userId = req.params.userId;
-
+    const { propertyId, firstName, lastName, email, userId } = req.body;
+    
     // Check if the combination of user_id and property_id already exists
     const sqlCheckExistence = `SELECT * FROM userapplicationtable WHERE user_id = ? AND property_id = ?`;
 
