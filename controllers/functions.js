@@ -252,6 +252,8 @@ export const apply = (req, res) => {
       const companyidPath = req.files.companyid[0].path;
       const certificatePath = req.files.certificate[0].path;
 
+      const userId = req.params.userId;
+
       const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, first_name, last_name, email, companyid, certificate, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
       const values = [userId, propertyId, firstName, lastName, email, companyidPath, certificatePath, 'PENDING'];
 
