@@ -334,7 +334,7 @@ db.query(query, [userId], (error, results) => {
 
 export const getStatus = (req, res) => {
   const userId = req.params.userId;
-  const sqlGetStatus = "SELECT status, comments FROM userapplicationtable WHERE id = ?";
+  const sqlGetStatus = "SELECT status FROM userapplicationtable WHERE user_id = ?";
   db.query(sqlGetStatus, [userId], (err, result) => {
       if (err) {
           console.error('Error fetching status:', err);
@@ -345,7 +345,12 @@ export const getStatus = (req, res) => {
           return res.status(404).json({ error: 'Application not found' });
       }
       // Return the status
+<<<<<<< HEAD
       const { status, comments } = result[0];
       res.json({ status, comments });
+=======
+      const { status } = result[0];
+      res.json({ status });
+>>>>>>> parent of 74bd527 (UPDATE ENDPOINT GETSTATUS TO ADD GET COMMENT)
   });
 };
