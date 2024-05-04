@@ -231,7 +231,7 @@ export const apply = (req, res) => {
     }
 
     const { propertyId, firstName, lastName, email } = req.body;
-    const userId = req.params.userId;
+    const userId = 1;
 
     // Check if the combination of user_id and property_id already exists
     const sqlCheckExistence = `SELECT * FROM userapplicationtable WHERE user_id = ? AND property_id = ?`;
@@ -251,8 +251,6 @@ export const apply = (req, res) => {
       // If the combination doesn't exist, insert new data
       const companyidPath = req.files.companyid[0].path;
       const certificatePath = req.files.certificate[0].path;
-
-      const userId = req.params.userId;
 
       const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, first_name, last_name, email, companyid, certificate, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
       const values = [userId, propertyId, firstName, lastName, email, companyidPath, certificatePath, 'PENDING'];
