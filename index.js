@@ -30,7 +30,7 @@ app.use(cors({
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(fileUpload());
+app.use('/uploads', express.static('uploads'));
 
 
 app.use((req, res, next) => {

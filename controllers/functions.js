@@ -237,8 +237,8 @@ export const apply = (req, res) => {
     }
 
     // Move the files to a folder on your server
-    const companyidPath = '/path/to/save/companyid.jpg';
-    const certificatePath = '/path/to/save/certificate.jpg';
+    const companyidPath = '../uploads/companyid.jpg';
+    const certificatePath = '../uploads/certificate.jpg';
 
     companyid.mv(companyidPath, (err) => {
       if (err) {
@@ -251,7 +251,6 @@ export const apply = (req, res) => {
           console.error('Error saving certificate:', err);
           return res.status(500).json({ error: 'Internal Server Error' });
         }
-        const userId = req.params.userId;
 
         // Once the files are saved, insert the data into the database
         const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, first_name, last_name, email, companyid, certificate, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
