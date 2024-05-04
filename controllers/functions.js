@@ -282,9 +282,9 @@ export const updateStatus = (req, res) => {
 };
 
 export const getStatusAndComments = (req, res) => {
-  const { userId } = req.params;
-  const sqlGetStatusAndComments = "SELECT status FROM userapplicationtable WHERE user_id = ?";
-  db.query(sqlGetStatusAndComments, [userId], (err, result) => {
+  const { id } = req.params;
+  const sqlGetStatusAndComments = "SELECT status, comments FROM userapplicationtable WHERE id = ?";
+  db.query(sqlGetStatusAndComments, [id], (err, result) => {
       if (err) {
           console.error('Error fetching status and comments:', err);
           return res.status(500).json({ error: 'Internal server error' });
@@ -294,8 +294,8 @@ export const getStatusAndComments = (req, res) => {
           return res.status(404).json({ error: 'Application not found' });
       }
       // Return the status and comments
-      const { status, comments, userId } = result[0];
-      res.json({ status, comments, userId });
+      const { status, comments } = result[0];
+      res.json({ status, comments });
   });
 };
 
