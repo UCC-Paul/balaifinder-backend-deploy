@@ -345,12 +345,7 @@ export const getStatus = (req, res) => {
           return res.status(404).json({ error: 'Application not found' });
       }
       // Return the status
-<<<<<<< HEAD
-      const { status, comments } = result[0];
-      res.json({ status, comments });
-=======
       const { status } = result[0];
       res.json({ status });
->>>>>>> parent of 74bd527 (UPDATE ENDPOINT GETSTATUS TO ADD GET COMMENT)
   });
 };
