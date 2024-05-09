@@ -3,14 +3,11 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import relauthRoutes from "./routes/relauth.js";
 import cookieParser from "cookie-parser";
-import fileUpload from "express-fileupload";
 import cors from "cors";
-import { db } from "./connect.js";
 import path from 'path'
 import { showAlgorithmResult } from "./controllers/algorithm.js";
 import { addproperties, deleteproperties, updateproperties } from "./controllers/crud.js";
 import { ald, apply, getStatusAndComments, getapplications, getuserapplicationbyid, getlikes, getlocation, getprice, getproperty, getpropertybyid, gettype, submitpreferences, updateStatus, getStatus } from "./controllers/functions.js";
-import multer from 'multer'
 import fs from 'fs';
 
 const app = express();
