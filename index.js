@@ -60,7 +60,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/relauth", relauthRoutes);
 app.get("/api/get", showAlgorithmResult);
-app.post("/api/post/crud/addproperties", addproperties);
+app.post("/api/post/crud/addproperties/:realtorId", addproperties);
 app.delete("/api/delete/crud/delproperties/:id", deleteproperties);
 app.put("/api/update/crud/updproperties/:id", updateproperties);
 app.get("/api/get/option/location", getlocation);
