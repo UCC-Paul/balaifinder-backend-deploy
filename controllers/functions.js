@@ -94,7 +94,6 @@ export const getpropertybyrealtorid = (req, res) => {
   });
 };
 
-
 export const submitpreferences = (req, res) => {
     const { location, house_type, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
     // Check if any of the submitted values are the default placeholder values
@@ -140,51 +139,44 @@ export const submitpreferences = (req, res) => {
 export const ald = (req, res) => {
   const { productId, action } = req.body;
   const userId = req.params.userId;
+
   if (!userId) {
     return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
   }
-  let tableName = '';
-  // Determine the table name based on action
-  switch (action) {
-    case 'ACCEPT':
-      tableName = 'useraccepttable';
-      break;
-    case 'LIKE':
-      tableName = 'userliketable';
-      break;
-    case 'DENY':
-      tableName = 'userdenytable';
-      break;
-    default:
-      return res.status(400).json({ error: 'Invalid action' });
+
+  // Check if the action is valid
+  if (action !== 'LIKE') {
+    return res.status(400).json({ error: 'Invalid action' });
   }
+
   // Check if the combination of user_id and product_id already exists
-  const sqlCheckExistence = `SELECT * FROM ${tableName} WHERE user_id = ? AND property_id = ?`;
+  const sqlCheckExistence = `SELECT * FROM userliketable WHERE user_id = ? AND property_id = ?`;
 
   db.query(sqlCheckExistence, [userId, productId], (err, result) => {
     if (err) {
-      console.error(`Error checking existence in ${tableName}:`, err);
-      return res.status(500).json({ error: `Error checking existence in ${tableName}` });
+      console.error("Error checking existence in userliketable:", err);
+      return res.status(500).json({ error: "Error checking existence in userliketable" });
     }
 
     // If the result contains any rows, it means the combination already exists
     if (result.length > 0) {
-      return res.status(400).json({ message: `User has already ${action.toLowerCase()}ed this property` });
+      return res.status(400).json({ message: "User has already liked this property" });
     }
 
-    // Insert product ID and user ID into the respective table
-    const sqlInsertProductId = `INSERT INTO ${tableName} (user_id, property_id) VALUES (?, ?)`;
+    // Insert product ID and user ID into the userliketable
+    const sqlInsertProductId = `INSERT INTO userliketable (user_id, property_id) VALUES (?, ?)`;
 
     db.query(sqlInsertProductId, [userId, productId], (err, result) => {
       if (err) {
-        console.error(`Error inserting product ID into ${tableName}:`, err);
-        return res.status(500).json({ error: `Error inserting product ID into ${tableName}` });
+        console.error("Error inserting product ID into userliketable:", err);
+        return res.status(500).json({ error: "Error inserting product ID into userliketable" });
       }
-      console.log(`Product ID inserted successfully into ${tableName}`);
-      res.json({ message: `Product ID inserted successfully into ${tableName}` });
+      console.log("Product ID inserted successfully into userliketable");
+      res.json({ message: "Product ID inserted successfully into userliketable" });
     });
   });
-}
+};
+
 
 export const getlikes = (req, res) => {
   const userId = req.params.userId;
