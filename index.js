@@ -7,7 +7,7 @@ import cors from "cors";
 import path from 'path'
 import { showAlgorithmResult } from "./controllers/algorithm.js";
 import { addproperties, deleteproperties, updateproperties } from "./controllers/crud.js";
-import { ald, apply, getStatusAndComments, getapplications, getuserapplicationbyid, getlikes, getlocation, getprice, getproperty, getpropertybyid, gettype, submitpreferences, updateStatus, getStatus } from "./controllers/functions.js";
+import { ald, apply, getStatusAndComments, getapplications, getuserapplicationbyid, getlikes, getlocation, getprice, getproperty, getpropertybyid, gettype, submitpreferences, updateStatus, getStatus, getpropertybyrealtorid } from "./controllers/functions.js";
 
 const app = express();
 
@@ -48,9 +48,13 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/relauth", relauthRoutes);
 app.get("/api/get", showAlgorithmResult);
+
 app.post("/api/post/crud/addproperties/:userId", addproperties);
 app.delete("/api/delete/crud/delproperties/:id", deleteproperties);
 app.put("/api/update/crud/updproperties/:id", updateproperties);
+app.put('/api/update/application/:id/status', updateStatus);
+app.get('/api/get/:userId/properties', getpropertybyrealtorid);
+
 app.get("/api/get/option/location", getlocation);
 app.get("/api/get/option/price", getprice);
 app.get("/api/get/option/type", gettype);
@@ -61,7 +65,7 @@ app.post("/api/post/:userId/submitpreferences", submitpreferences);
 app.post("/api/post/:userId/ald", ald);
 app.get('/api/get/:userId/likes', getlikes);
 app.post('/api/post/apply/:userId', apply);
-app.put('/api/update/application/:id/status', updateStatus);
+
 app.get('/api/get/application/:id/status', getStatusAndComments)
 app.get('/api/get/:userId/user/application', getuserapplicationbyid);
 app.get('/api/get/:userId/user/status', getStatus);

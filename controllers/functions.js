@@ -76,6 +76,24 @@ export const getpropertybyid = (req, res) => {
     });
 };
 
+export const getpropertybyrealtorid = (req, res) => {
+  const realtor_id = req.params.userId;
+
+  if (!realtor_id) {
+    return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
+  }
+
+  const sqlGetPropertyByRealtorId = "SELECT * FROM propertiestable WHERE realtor_id = ?";
+    db.query(sqlGetPropertyByRealtorId, (err, result) => {
+        if (err) {
+        console.log("error", err);
+        return res.status(500).json({ error: "Internal server error" });
+        }
+        console.log("result", result);
+        res.send(result);
+    });
+};
+
 export const submitpreferences = (req, res) => {
     const { location, house_type, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
     // Check if any of the submitted values are the default placeholder values
@@ -168,7 +186,7 @@ export const ald = (req, res) => {
 }
 
 export const getlikes = (req, res) => {
-    const userId = req.params.userId;
+  const userId = req.params.userId;
 
   if (!userId) {
     return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
