@@ -84,15 +84,16 @@ export const getpropertybyrealtorid = (req, res) => {
   }
 
   const sqlGetPropertyByRealtorId = "SELECT * FROM propertiestable WHERE realtor_id = ?";
-    db.query(sqlGetPropertyByRealtorId, (err, result) => {
-        if (err) {
-        console.log("error", err);
-        return res.status(500).json({ error: "Internal server error" });
-        }
-        console.log("result", result);
-        res.send(result);
-    });
+  db.query(sqlGetPropertyByRealtorId, [realtor_id], (err, result) => {
+    if (err) {
+      console.log("error", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    console.log("result", result);
+    res.send(result);
+  });
 };
+
 
 export const submitpreferences = (req, res) => {
     const { location, house_type, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
