@@ -8,14 +8,8 @@ import path from 'path'
 import { showAlgorithmResult } from "./controllers/algorithm.js";
 import { addproperties, deleteproperties, updateproperties } from "./controllers/crud.js";
 import { ald, apply, getStatusAndComments, getapplications, getuserapplicationbyid, getlikes, getlocation, getprice, getproperty, getpropertybyid, gettype, submitpreferences, updateStatus, getStatus } from "./controllers/functions.js";
-import fs from 'fs';
 
 const app = express();
-
-const uploadsDir = './uploads';
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
-}
 
 //Backend Design
 app.get('', (req, res) => {
@@ -23,17 +17,14 @@ app.get('', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'index.html'));
 });
 
-
 /// Middleware
 app.use(cors({
   origin: ["https://matchwithbalaifinder.vercel.app"],
   credentials: true // Enable credentials (cookies, authorization headers, etc.)
 }));
 
-
 app.use(cookieParser());
 app.use(express.json());
-app.use('/uploads', express.static('uploads'));
 
 
 app.use((req, res, next) => {
