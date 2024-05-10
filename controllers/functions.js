@@ -209,20 +209,6 @@ export const getlikes = (req, res) => {
   });
 }
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './uploads/')
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now())
-  }
-})
-
-const upload = multer({ storage: storage }).fields([
-  { name: 'companyid', maxCount: 1 },
-  { name: 'certificate', maxCount: 1 }
-]);
-
 export const apply = (req, res) => {
   const { propertyId, firstName, lastName, email, fileUrl, companyIdUrl } = req.body; // Include 'companyIdUrl' in the destructuring
   const userId = req.params.userId; // Assuming user_id is 1
