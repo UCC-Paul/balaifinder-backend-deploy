@@ -2,6 +2,7 @@ import { db } from "../connect.js";
 import fileUpload from "express-fileupload";
 import multer from 'multer';
 
+//USED FOR POPULATING OPTIONS LOCATION IN SETTING PREFERENCES
 export const getlocation = (req, res) => {
     const sqlGetoptionLocation = "SELECT DISTINCT location FROM propertiestable";
     db.query(sqlGetoptionLocation, (err, result) => {
@@ -14,6 +15,7 @@ export const getlocation = (req, res) => {
     });
 };
 
+//USED FOR POPULATING OPTIONS TYPE IN SETTING PREFERENCES
 export const gettype = (req, res) => {
     const sqlGetoptionType = "SELECT DISTINCT type FROM propertiestable";
     db.query(sqlGetoptionType, (err, result) => {
@@ -26,6 +28,7 @@ export const gettype = (req, res) => {
     });
 };
 
+//USED FOR POPULATING OPTIONS PRICE IN SETTING PREFERENCES
 export const getprice = (req, res) => {
     const sqlGetoptionPrice = "SELECT DISTINCT price FROM propertiestable";
     db.query(sqlGetoptionPrice, (err, result) => {
@@ -49,6 +52,7 @@ export const getapplications = (req, res) => {
   });
 };
 
+//USED IN LISTING ALL PROPERTY IN PROPERTY LIST/PAGE
 export const getproperty = (req, res) => {
     const sqlGetallProperties = "SELECT * FROM propertiestable";
     db.query(sqlGetallProperties, (err, result) => {
@@ -61,6 +65,7 @@ export const getproperty = (req, res) => {
     });
 };
 
+//USED IN PROPERTY DETAILS PAGE
 export const getpropertybyid = (req, res) => {
     const productId = req.params.id;
     const sqlGetProductById = "SELECT * FROM propertiestable WHERE id = ?";
@@ -76,6 +81,7 @@ export const getpropertybyid = (req, res) => {
     });
 };
 
+//USED IN REALTOR MANAGE PROPERTY PAGE TO SHOW HIS OWN PROPERTY
 export const getpropertybyrealtorid = (req, res) => {
   const realtor_id = req.params.userId;
 
@@ -94,6 +100,7 @@ export const getpropertybyrealtorid = (req, res) => {
   });
 };
 
+//USED IN SUBMITTING ALGORITH PREFERENCES
 export const submitpreferences = (req, res) => {
     const { location, house_type, price, near_elementary, near_highschool, near_college, businessready, near_church, near_mall, bedroom, bathroom, familysize, typeoflot} = req.body;
     // Check if any of the submitted values are the default placeholder values
@@ -177,7 +184,7 @@ export const ald = (req, res) => {
   });
 };
 
-
+//USED IN GETTING USER LIKES
 export const getlikes = (req, res) => {
   const userId = req.params.userId;
 
