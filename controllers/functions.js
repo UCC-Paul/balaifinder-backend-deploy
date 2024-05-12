@@ -47,10 +47,17 @@ export const getapplications = (req, res) => {
   if (!realtor_id) {
     return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
   }
-  const sqlGetMessages = "SELECT * FROM userapplicationtable WHERE realtor_id = ?";
-  db.query(sqlGetMessages, [realtor_id], (err, result) => {
+  
+  const sqlGetApplications = `
+    SELECT u.*, p.realtor_id 
+    FROM userapplicationtable u
+    INNER JOIN propertiestable p ON u.property_id = p.property_id
+    WHERE p.realtor_id = ?;
+  `;
+
+  db.query(sqlGetApplications, [realtor_id], (err, result) => {
     if (err) {
-      console.error("Error fetching messages:", err);
+      console.error("Error fetching applications:", err);
       return res.status(500).json({ error: "Internal server error" });
     }
     res.json(result);
