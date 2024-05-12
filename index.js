@@ -54,12 +54,11 @@ app.delete("/api/delete/crud/delproperties/:id", deleteproperties);
 app.put("/api/update/crud/updproperties/:id", updateproperties);
 app.put('/api/update/application/:id/status', updateStatus);
 app.get('/api/get/:userId/properties', getpropertybyrealtorid);
-app.get("/api/get/:userId/applications", getapplications);
 
 app.get("/api/get/option/location", getlocation);
 app.get("/api/get/option/price", getprice);
 app.get("/api/get/option/type", gettype);
-
+app.get("/api/get/applications", getapplications);
 app.get("/api/get/properties/:id", getpropertybyid);
 app.get("/api/get/properties", getproperty);
 app.post("/api/post/:userId/submitpreferences", submitpreferences);
