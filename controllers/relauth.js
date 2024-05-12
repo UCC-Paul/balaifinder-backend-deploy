@@ -132,3 +132,24 @@ export const rellogout = (req, res) => {
     .status(200)
     .json("Realtor has been logged out.");
 };
+
+// Endpoint to handle email verification
+export const verifyEmail = (req, res) => {
+  const verificationToken = req.params.token;
+
+  // Check if the verification token exists in the database
+  const q = "SELECT * FROM realtor WHERE verification_token = ?";
+
+  db.query(q, [verificationToken], (err, data) => {
+    if (err) return res.status(500).json(err);
+    if (data.length === 0) return res.status(404).json("Verification token not found!");
+
+    // Update the 'verified' field to 1 (true)
+    const updateQuery = "UPDATE realtor SET verified = 1 WHERE verification_token = ?";
+    db.query(updateQuery, [verificationToken], (err, result) => {
+      if (err) return res.status(500).json(err);
+
+      return res.status(200).json("Realtor verified successfully.");
+    });
+  });
+};
