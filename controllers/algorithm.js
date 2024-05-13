@@ -1,30 +1,6 @@
 import { db } from "../connect.js";
 
 export const showAlgorithmResult = (req, res) => {
-  const sqlGetWeights = `
-    SELECT 
-      locationpriority, 
-      typepriority, 
-      pricepriority, 
-      isnearelementarypriority, 
-      isnearhighschoolpriority, 
-      isnearcollegepriority, 
-      isnearmallpriority, 
-      isnearchurchpriority, 
-      bedroompriority, 
-      bathroompriority, 
-      familysizepriority, 
-      businessreadypriority, 
-      lottypepriority 
-    FROM userprioritytable;
-  `;
-
-  db.query(sqlGetWeights, (error, weightResults) => {
-    if (error) {
-      console.error("Error fetching weights:", error);
-      return res.status(500).json({ message: "Internal server error." });
-    }
-
   const sqlGet = `
   SELECT *,
   (
@@ -95,9 +71,4 @@ ORDER BY score DESC;
 
     res.send(results);
   });
-});
 };
-
-
-
-
