@@ -288,7 +288,7 @@ export const apply = (req, res) => {
     }
 
     // If the combination doesn't exist, insert new data
-    const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, first_name, last_name, email, certificate, companyid, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "PENDING")`; // Include 'companyid' in the query
+    const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, realtor_id, first_name, last_name, email, certificate, companyid, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "PENDING")`; // Include 'companyid' in the query
     const values = [userId, propertyId, realtorId, firstName, lastName, email, fileUrl, companyIdUrl]; // Include 'companyIdUrl' in the values
 
     // Execute the query to insert new data
