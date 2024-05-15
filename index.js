@@ -56,7 +56,7 @@ app.get('/api/get/:userId/properties', getpropertybyrealtorid);
 app.get("/api/get/option/location", getlocation); // CHECKED WORKING!
 app.get("/api/get/option/price", getprice); // CHECKED WORKING!
 app.get("/api/get/option/type", gettype); // CHECKED WORKING!
-app.get("/api/get/applications", getapplications); // CHECKED WORKING!
+app.get("/api/get/applications/:userId", getapplications); // CHECKED WORKING!
 app.get("/api/get/properties/:id", getpropertybyid); // CHECKED WORKING!
 app.get("/api/get/properties", getproperty); // CHECKED WORKING!
 app.post("/api/post/:userId/submitpreferences", submitpreferences);
