@@ -269,8 +269,8 @@ export const getlikes = (req, res) => {
 }
 
 export const apply = (req, res) => {
-  const { propertyId, realtorId, firstName, lastName, email, fileUrl, companyIdUrl } = req.body; // Include 'companyIdUrl' in the destructuring
-  const userId = req.params.userId; // Assuming user_id is 1
+  const { propertyId, realtorId, firstName, lastName, email, fileUrl, companyIdUrl } = req.body;
+  const userId = req.params.userId;
 
   // Check if the combination of user_id and property_id already exists
   const sqlCheckExistence = `SELECT * FROM userapplicationtable WHERE user_id = ? AND property_id = ?`;
@@ -281,17 +281,15 @@ export const apply = (req, res) => {
       return res.status(500).json({ error: 'Internal Server Error' });
     }
 
-    // If the result contains any rows, it means the combination already exists
     if (result.length > 0) {
       console.log('You already applied');
       return res.status(400).json({ message: 'You already applied' });
     }
 
-    // If the combination doesn't exist, insert new data
-    const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, realtor_id, first_name, last_name, email, certificate, companyid, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "PENDING")`; // Include 'companyid' in the query
-    const values = [userId, propertyId, realtorId, firstName, lastName, email, fileUrl, companyIdUrl]; // Include 'companyIdUrl' in the values
+    // Insert new data if the combination doesn't exist
+    const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, realtor_id, first_name, last_name, email, certificate, companyid, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "PENDING")`;
+    const values = [userId, propertyId, realtorId, firstName, lastName, email, fileUrl, companyIdUrl];
 
-    // Execute the query to insert new data
     db.query(sqlInsertApplication, values, (err, result) => {
       if (err) {
         console.error('Error inserting data into userapplicationtable:', err);
@@ -302,6 +300,7 @@ export const apply = (req, res) => {
     });
   });
 };
+
 
 export const updateStatus = (req, res) => {
   const { id } = req.params;
