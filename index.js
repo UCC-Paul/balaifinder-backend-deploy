@@ -48,22 +48,19 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/relauth", relauthRoutes);
 app.get("/api/get", showAlgorithmResult);
-
-app.post("/api/post/crud/addproperties/:userId", addproperties);
-app.delete("/api/delete/crud/delproperties/:id", deleteproperties);
-app.put("/api/update/crud/updproperties/:id", updateproperties);
-app.put('/api/update/application/:id/status', updateStatus);
+app.post("/api/post/crud/addproperties/:userId", addproperties); // CHECKED WORKING!
+app.delete("/api/delete/crud/delproperties/:id", deleteproperties); // CHECKED WORKING!
+app.put("/api/update/crud/updproperties/:id", updateproperties); // CHECKED WORKING!
+app.put('/api/update/application/:id/status', updateStatus); 
 app.get('/api/get/:userId/properties', getpropertybyrealtorid);
-
-app.get("/api/get/option/location", getlocation);
-app.get("/api/get/option/price", getprice);
-app.get("/api/get/option/type", gettype);
-app.get("/api/get/applications", getapplications);
-app.get("/api/get/properties/:id", getpropertybyid);
-app.get("/api/get/properties", getproperty);
+app.get("/api/get/option/location", getlocation); // CHECKED WORKING!
+app.get("/api/get/option/price", getprice); // CHECKED WORKING!
+app.get("/api/get/option/type", gettype); // CHECKED WORKING!
+app.get("/api/get/applications", getapplications); // CHECKED WORKING!
+app.get("/api/get/properties/:id", getpropertybyid); // CHECKED WORKING!
+app.get("/api/get/properties", getproperty); // CHECKED WORKING!
 app.post("/api/post/:userId/submitpreferences", submitpreferences);
 app.get('/api/get/:userId/likes', getlikes);
-app.post("/api/post/:userId/ald", ald);
 app.post("/api/post/:userId/like", like);
 
 
