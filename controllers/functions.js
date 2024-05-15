@@ -269,7 +269,7 @@ export const getlikes = (req, res) => {
 }
 
 export const apply = (req, res) => {
-  const { propertyId, firstName, lastName, email, fileUrl, companyIdUrl } = req.body; // Include 'companyIdUrl' in the destructuring
+  const { propertyId, realtorId, firstName, lastName, email, fileUrl, companyIdUrl } = req.body; // Include 'companyIdUrl' in the destructuring
   const userId = req.params.userId; // Assuming user_id is 1
 
   // Check if the combination of user_id and property_id already exists
@@ -288,8 +288,8 @@ export const apply = (req, res) => {
     }
 
     // If the combination doesn't exist, insert new data
-    const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, first_name, last_name, email, certificate, companyid, status) VALUES (?, ?, ?, ?, ?, ?, ?, "PENDING")`; // Include 'companyid' in the query
-    const values = [userId, propertyId, firstName, lastName, email, fileUrl, companyIdUrl]; // Include 'companyIdUrl' in the values
+    const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, first_name, last_name, email, certificate, companyid, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "PENDING")`; // Include 'companyid' in the query
+    const values = [userId, propertyId, realtorId, firstName, lastName, email, fileUrl, companyIdUrl]; // Include 'companyIdUrl' in the values
 
     // Execute the query to insert new data
     db.query(sqlInsertApplication, values, (err, result) => {
