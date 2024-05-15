@@ -43,8 +43,13 @@ export const getprice = (req, res) => {
 
 //USED TO GET APPLICATION TO REALTOR PAGE INBOX
 export const getapplications = (req, res) => {
-  const sqlGetMessages = "SELECT * FROM userapplicationtable";
-  db.query(sqlGetMessages, (err, result) => {
+  const realtor_id = req.params.userId;
+
+  if (!realtor_id) {
+    return res.status(401).json({ message: 'Unauthorized: User ID is missing' });
+  }
+  const sqlGetMessages = "SELECT * FROM userapplicationtable WHERE realtor_id = ?";
+  db.query(sqlGetMessages, [realtor_id], (err, result) => {
     if (err) {
       console.error("Error fetching messages:", err);
       return res.status(500).json({ error: "Internal server error" });
