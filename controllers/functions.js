@@ -235,7 +235,7 @@ export const getlikes = (req, res) => {
 
 //USED IN USER APPLY FOR PROPERTY
 export const apply = (req, res) => {
-  const { propertyId, realtorId, firstName, lastName, email, fileUrl, companyIdUrl } = req.body;
+  const { propertyId, realtorId, first_name, last_name, email, fileUrl, companyIdUrl } = req.body;
   const userId = req.params.userId;
 
   // Check if the combination of user_id and property_id already exists
@@ -254,7 +254,7 @@ export const apply = (req, res) => {
 
     // Insert new data if the combination doesn't exist
     const sqlInsertApplication = `INSERT INTO userapplicationtable (user_id, property_id, realtor_id, first_name, last_name, email, certificate, companyid, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, "PENDING")`;
-    const values = [userId, propertyId, realtorId, firstName, lastName, email, fileUrl, companyIdUrl];
+    const values = [userId, propertyId, realtorId, first_name, last_name, email, fileUrl, companyIdUrl];
 
     db.query(sqlInsertApplication, values, (err, result) => {
       if (err) {
